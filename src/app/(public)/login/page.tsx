@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "../styles.module.css";
+import Cookies from "js-cookie";
 
 export default function Login() {
-  const [loginMethod, setLoginMethod] = useState<"email" | "cpf">("email");
-  const [formData, setFormData] = useState({ email: "", cpf: "", senha: "" });
+  const router = useRouter();
+  //const [loginMethod, setLoginMethod] = useState<"email" | "cpf">("email");
+  const [formData, setFormData] = useState({ identifier: "", senha: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -14,16 +17,16 @@ export default function Login() {
 
   const handleLogin = () => {
     console.log(formData);
-   
+    Cookies.set("token", "fake-token-do-usuario", { expires: 1 }); // Expira em 1 dia
+    router.push("/inicio");
   };
 
   return (
     <div className={styles.container}>
+      <img src="/logo.png" alt="Logo" className={styles.logo} />
       <div className={styles.card}>
-        <img src="/logo.png" alt="Logo" className={styles.logo} />
-        <h1 className={styles.title}>Login</h1>
-
-        <div style={{ marginBottom: "1rem" }}>
+        <h1 className={styles.title}>Bem-vindo de volta!</h1>
+        {/* <div style={{ marginBottom: "1rem" }}>
           <button
             className={styles.buttonSecondary}
             onClick={() => setLoginMethod("email")}
@@ -36,9 +39,9 @@ export default function Login() {
           >
             Usar CPF
           </button>
-        </div>
+        </div> */}
 
-        {loginMethod === "email" ? (
+        {/* {loginMethod === "email" ? (
           <input
             name="email"
             placeholder="Email"
@@ -54,7 +57,15 @@ export default function Login() {
             onChange={handleChange}
             className={styles.input}
           />
-        )}
+        )} */}
+
+        <input
+          name="identifier"
+          placeholder="Digite o email ou CPF"
+          value={formData.identifier}
+          onChange={handleChange}
+          className={styles.input}
+        />
 
         <input
           type="password"
@@ -67,6 +78,15 @@ export default function Login() {
 
         <button className={styles.buttonPrimary} onClick={handleLogin}>
           Entrar
+        </button>
+      </div>
+      <div className={styles.bottomDiv}>
+        <p>Ainda não possui uma conta?</p>
+        <button
+          className={styles.buttonSecondary}
+          onClick={() => router.push("/cadastro")}
+        >
+          Criar conta
         </button>
       </div>
     </div>

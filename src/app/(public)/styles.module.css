@@ -1,3 +1,11 @@
+.topLine {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 32px;
+  background-color: var(--primary);
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -8,6 +16,7 @@
 }
 
 .card {
+  margin-top: 1rem;
   background: var(--background-secondary);
   padding: 2rem;
   border-radius: var(--radius-lg);
@@ -26,13 +35,13 @@
   font-size: 1.4rem;
   font-weight: bold;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .subtitle {
   font-size: 0.9rem;
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .input {
@@ -56,6 +65,7 @@
   cursor: pointer;
   font-family: Poppins, sans-serif;
   height: 40px;
+  transition: 0.2s ease;
 }
 
 .buttonSecondary {
@@ -69,6 +79,15 @@
   margin-top: 0.5rem;
   font-family: Poppins, sans-serif;
   height: 40px;
+  transition: 0.2s ease;
+}
+
+.bottomDiv {
+  margin-top: 1rem;
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .buttonPrimary:hover {

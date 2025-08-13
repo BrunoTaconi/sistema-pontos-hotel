@@ -11,7 +11,7 @@ export function middleware(req: NextRequest) {
   }
 
   if (token && isPublicPage) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+    return NextResponse.redirect(new URL('/inicio', req.url));
   }
 
   return NextResponse.next();

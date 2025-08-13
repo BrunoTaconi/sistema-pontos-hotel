@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./Sidebar.module.css";
+import Cookies from "js-cookie";
 //icons
 import { IoHomeOutline } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
@@ -17,7 +18,7 @@ import { PiSignOutBold } from "react-icons/pi";
 const menuItems = [
   {
     label: "Início",
-    href: "/",
+    href: "/inicio",
     icon: <IoHomeOutline size={18} />,
     iconFill: <IoHome size={18} />,
   },
@@ -39,16 +40,17 @@ const menuItems = [
     icon: <TbHelpHexagon size={18} />,
     iconFill: <TbHelpHexagonFilled size={18} />,
   },
-  {
-    label: "Sair",
-    href: "/login",
-    icon: <PiSignOutBold size={18} />,
-    iconFill: <PiSignOutBold size={18} />,
-  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    Cookies.remove("token");
+    router.push("/login");
+  };
 
   return (
     <aside className={styles.sidebarContainer}>
@@ -74,6 +76,12 @@ export default function Sidebar() {
               </Link>
             );
           })}
+          <a href="/login" onClick={handleLogout} className={styles.navItem}>
+            <span className={styles.navItemIcon}>
+              <PiSignOutBold size={18} />
+            </span>
+            Sair
+          </a>
         </ul>
       </nav>
     </aside>
