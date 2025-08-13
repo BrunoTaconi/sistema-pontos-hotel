@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--background-primary);
+}
+
+.card {
+  background: var(--background-secondary);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.logo {
+  max-height: 70px;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  height: 40px;
+  margin-bottom: 1rem;
+  outline: none;
+  font-family: Poppins, sans-serif;
+}
+
+.buttonPrimary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  cursor: pointer;
+  font-family: Poppins, sans-serif;
+  height: 40px;
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: var(--primary);
+  padding: 0.6rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-family: Poppins, sans-serif;
+  height: 40px;
+}
+
+.buttonPrimary:hover {
+  opacity: 0.9;
+}
+
+.buttonSecondary:hover {
+  background-color: rgba(37, 87, 123, 0.1);
+}

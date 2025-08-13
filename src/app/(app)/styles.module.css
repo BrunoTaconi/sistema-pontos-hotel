@@ -1,0 +1,11 @@
+.appContainer {
+  display: flex;
+}
+
+.mainContent {
+  flex: 1;
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  height: 100vh;
+  overflow-y: auto;
+}
