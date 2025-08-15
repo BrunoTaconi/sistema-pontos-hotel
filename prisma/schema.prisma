@@ -15,7 +15,7 @@ model Usuario {
   tipoDocumento   String
   numeroDocumento String
   hashSenha       String
-  papel           String       @default("usuario")
+  hierarquia      String       @default("usuario")
   telefone        String
   criadoEm        DateTime     @default(now())
   Resgate         Resgate[]
@@ -32,13 +32,15 @@ model Transacoes {
 }
 
 model Recompensa {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   nome      String
   descricao String
   custo     Int
   ativo     Boolean
-  criadoEm  DateTime  @default(now())
-  Resgate   Resgate[]
+  criadoEm  DateTime @default(now())
+  imagem    String?
+
+  Resgate Resgate[]
 }
 
 model Resgate {

@@ -11,6 +11,10 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.1",
+    "@mui/x-data-grid": "^8.10.0",
     "@prisma/client": "^6.13.0",
     "bcrypt": "^6.0.0",
     "cookie": "^1.0.2",

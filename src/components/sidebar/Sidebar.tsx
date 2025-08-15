@@ -14,6 +14,7 @@ import { HiUser } from "react-icons/hi2";
 import { TbHelpHexagon } from "react-icons/tb";
 import { TbHelpHexagonFilled } from "react-icons/tb";
 import { PiSignOutBold } from "react-icons/pi";
+import { RiAdminFill } from "react-icons/ri";
 
 const menuItems = [
   {
@@ -33,6 +34,12 @@ const menuItems = [
     href: "/dados",
     icon: <HiOutlineUser size={18} />,
     iconFill: <HiUser size={18} />,
+  },
+    {
+    label: "Painel Administrativo",
+    href: "/administracao",
+    icon: <RiAdminFill size={18} />,
+    iconFill: <RiAdminFill size={18} />,
   },
   {
     label: "Ajuda",
