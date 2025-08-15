@@ -8,38 +8,38 @@ datasource db {
 }
 
 model Usuario {
-  id              Int          @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
   nome            String
-  email           String       @unique
+  email           String      @unique
   tipoDocumento   String
   numeroDocumento String
   hashSenha       String
-  hierarquia      String       @default("usuario")
   telefone        String
-  criadoEm        DateTime     @default(now())
-  Resgate         Resgate[]
-  pontos          Transacoes[]
+  criadoEm        DateTime    @default(now())
+  hierarquia      Hierarquia  @default(usuario)
+  saldoPontos     Int         @default(0)
+  resgates        Resgate[]
+  transacoes      Transacao[]
 }
 
-model Transacoes {
-  id        Int      @id @default(autoincrement())
+model Transacao {
+  id        Int           @id @default(autoincrement())
   idUsuario Int
   pontos    Int
-  tipo      String
-  criadoEm  DateTime @default(now())
-  usuario   Usuario  @relation(fields: [idUsuario], references: [id])
+  tipo      TipoTransacao
+  criadoEm  DateTime      @default(now())
+  usuario   Usuario       @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
 }
 
 model Recompensa {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   nome      String
   descricao String
   custo     Int
-  ativo     Boolean
-  criadoEm  DateTime @default(now())
+  ativo     Boolean   @default(true)
+  criadoEm  DateTime  @default(now())
   imagem    String?
-
-  Resgate Resgate[]
+  resgates  Resgate[]
 }
 
 model Resgate {
@@ -47,6 +47,16 @@ model Resgate {
   idUsuario    Int
   idRecompensa Int
   criadoEm     DateTime   @default(now())
-  recompensa   Recompensa @relation(fields: [idRecompensa], references: [id])
-  usuario      Usuario    @relation(fields: [idUsuario], references: [id])
+  recompensa   Recompensa @relation(fields: [idRecompensa], references: [id], onDelete: Cascade)
+  usuario      Usuario    @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+}
+
+enum Hierarquia {
+  usuario
+  admin
+}
+
+enum TipoTransacao {
+  ganho
+  resgate
 }

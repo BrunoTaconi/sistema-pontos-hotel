@@ -113,6 +113,9 @@ export default function CadastroForm() {
     if (!formData.senha) {
       newErrors.senha = "Por favor, crie uma senha.";
       hasError = true;
+    } else if (formData.senha.length < 6) {
+      newErrors.senha = "A senha deve ter pelo menos 6 caracteres.";
+      hasError = true;
     } else if (formData.senha !== formData.confirmarSenha) {
       newErrors.confirmarSenha = "As senhas não coincidem.";
       hasError = true;
@@ -131,14 +134,16 @@ export default function CadastroForm() {
             nome: formData.nome,
             email: formData.email,
             tipoDocumento: "CPF",
-            numeroDocumento: formData.cpf,
+            numeroDocumento: formData.cpf.replace(/\D/g, ""),
             hashSenha: formData.senha,
-            telefone: formData.celular,
+            telefone: formData.celular.replace(/\D/g, ""),
+            nascimento: formData.nascimento,
+            estado: formData.estado,
+            cidade: formData.cidade,
           }),
         });
 
         if (res.ok) {
-         
           const loginRes = await fetch("/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -147,17 +152,16 @@ export default function CadastroForm() {
               senha: formData.senha,
             }),
           });
+
           if (loginRes.ok) {
             const { token } = await loginRes.json();
             Cookies.set("token", token, { expires: 1 });
             router.push("/resgate");
           } else {
-           
             console.error("Erro ao fazer login após cadastro");
             router.push("/login");
           }
         } else {
-          
           const errorData = await res.json();
           console.error("Erro no cadastro:", errorData);
         }
@@ -199,15 +203,10 @@ export default function CadastroForm() {
           onChange={handleChange}
           className={styles.input}
         />
-
         <ErrorMessage message={errors.nome} />
 
-        <input
-          name="cpf"
-          value={formData.cpf}
-          disabled
-          className={styles.input}
-        />
+        <input name="cpf" value={formData.cpf} disabled className={styles.input} />
+
         <input
           name="nascimento"
           placeholder="Nascimento (dd/mm/aaaa)"
