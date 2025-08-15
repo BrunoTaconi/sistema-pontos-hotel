@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import { Recompensa } from "@/generated/prisma";
@@ -7,49 +7,35 @@ import Image from "next/image";
 //icons
 import { FaArrowRight } from "react-icons/fa6";
 
-// Dados mockados de benefícios
-const mockBeneficios: Recompensa[] = [
-  {
-    id: 1,
-    nome: "30% OFF em Itens de Decoração",
-    descricao:
-      "Transforme a decoração da sua casa com elegância e sofisticação com este Kit de Vasos Decorativos em Cerâmica. Composto por peças artesanais em tons de verde e bege com acabamento esmaltado e texturas onduladas, este conjunto é ideal para compor estantes, racks, aparadores e mesas de centro.",
-    custo: 10,
-    ativo: true,
-    criadoEm: new Date(),
-    imagem: "/decoracao/capa.jpg",
-  },
-  {
-    id: 2,
-    nome: "Luminária relógio com carregador",
-    descricao: "",
-    custo: 20,
-    ativo: true,
-    criadoEm: new Date(),
-    imagem: "/luminaria/capa.jpg",
-  },
-  {
-    id: 3,
-    nome: "Máquina de café expresso",
-    descricao: "",
-    custo: 40,
-    ativo: true,
-    criadoEm: new Date(),
-    imagem: "/maquina_cafe/capa.jpg",
-  },
-  {
-    id: 4,
-    nome: "Iphone 13",
-    descricao: "",
-    custo: 40,
-    ativo: true,
-    criadoEm: new Date(),
-    imagem: "/iphone/capa.jpg",
-  },
-];
-
 const ResgatePage = () => {
   const router = useRouter();
+  const [beneficios, setBeneficios] = useState<Recompensa[]>([]);
+  const [saldo, setSaldo] = useState(0);
+  const [nomeUsuario, setNomeUsuario] = useState("Usuário");
+
+  useEffect(() => {
+    // Aqui você deve buscar o usuário logado para obter o nome e o saldo
+    // Por enquanto, vamos simular a busca
+    const fetchUserData = async () => {
+        // Simulação de busca de usuário (substituir pela lógica real)
+        // const res = await fetch('/api/me');
+        // const user = await res.json();
+        // setNomeUsuario(user.nome);
+        // setSaldo(user.saldo);
+        setNomeUsuario("Guilherme"); // Mocado
+        setSaldo(25); // Mocado
+    };
+
+    const fetchBeneficios = async () => {
+      const res = await fetch('/api/recompensas');
+      const data = await res.json();
+      setBeneficios(data);
+    };
+
+    fetchUserData();
+    fetchBeneficios();
+  }, []);
+
 
   const handleResgatarAgora = (beneficio: Recompensa) => {
     router.push(`/resgate/${beneficio.id}`);
@@ -57,7 +43,7 @@ const ResgatePage = () => {
   
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Olá Guilherme!</h1>
+      <h1 className={styles.title}>Olá {nomeUsuario}!</h1>
       <p className={styles.subTitle}>
         Confira os benefícios disponíveis para você.
       </p>
@@ -65,7 +51,7 @@ const ResgatePage = () => {
         <div className={styles.pointsCard}>
           <p>Total de Pontos</p>
           <div className={styles.pointsValue}>
-            <span>25 Real Points</span>
+            <span>{saldo} Real Points</span>
           </div>
         </div>
         <button className={styles.conferirButton}>
@@ -76,7 +62,7 @@ const ResgatePage = () => {
       <div className={styles.beneficiosContainer}>
         <h1 className={styles.title}>Benefícios</h1>
         <div className={styles.grid}>
-          {mockBeneficios.map((beneficio) => (
+          {beneficios.map((beneficio) => (
             <div key={beneficio.id} className={styles.card}>
               <div className={styles.imageWrapper}>
                 <Image

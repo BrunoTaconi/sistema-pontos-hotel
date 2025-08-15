@@ -10,7 +10,6 @@ export default function CadastroForm() {
   const searchParams = useSearchParams();
   const cpfParam = searchParams.get("cpf");
 
-  // 1. Corrija o estado de erros para incluir todos os campos
   const [errors, setErrors] = useState({
     nome: "",
     nascimento: "",
@@ -74,7 +73,7 @@ export default function CadastroForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors = {
       nome: "",
       nascimento: "",
@@ -118,19 +117,67 @@ export default function CadastroForm() {
       newErrors.confirmarSenha = "As senhas não coincidem.";
       hasError = true;
     }
-    
+
     setErrors(newErrors);
 
     if (!hasError) {
-      console.log("Formulário válido!", formData);
-      Cookies.set("token", "fake-token-do-usuario", { expires: 1 });
-      router.push("/inicio");
+      try {
+        const res = await fetch("/api/usuarios", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: formData.nome,
+            email: formData.email,
+            tipoDocumento: "CPF",
+            numeroDocumento: formData.cpf,
+            hashSenha: formData.senha,
+            telefone: formData.celular,
+          }),
+        });
+
+        if (res.ok) {
+         
+          const loginRes = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              identifier: formData.email,
+              senha: formData.senha,
+            }),
+          });
+          if (loginRes.ok) {
+            const { token } = await loginRes.json();
+            Cookies.set("token", token, { expires: 1 });
+            router.push("/resgate");
+          } else {
+           
+            console.error("Erro ao fazer login após cadastro");
+            router.push("/login");
+          }
+        } else {
+          
+          const errorData = await res.json();
+          console.error("Erro no cadastro:", errorData);
+        }
+      } catch (error) {
+        console.error("Erro de rede:", error);
+      }
     }
   };
 
   const ErrorMessage = ({ message }: { message: string }) => {
     return message ? (
-      <p style={{ color: "red", fontSize: "0.8rem", marginTop: "-0.5rem", marginBottom: "1rem", textAlign: "left" }}>
+      <p
+        style={{
+          color: "red",
+          fontSize: "0.8rem",
+          marginTop: "-0.5rem",
+          marginBottom: "1rem",
+          textAlign: "left",
+        }}
+      >
         {message}
       </p>
     ) : null;
@@ -145,30 +192,87 @@ export default function CadastroForm() {
           Preencha seus dados para concluir o cadastro.
         </p>
 
-        <input name="nome" placeholder="Nome Completo" value={formData.nome} onChange={handleChange} className={styles.input}/>
-      
+        <input
+          name="nome"
+          placeholder="Nome Completo"
+          value={formData.nome}
+          onChange={handleChange}
+          className={styles.input}
+        />
+
         <ErrorMessage message={errors.nome} />
 
-        <input name="cpf" value={formData.cpf} disabled className={styles.input}/>
-        <input name="nascimento" placeholder="Nascimento (dd/mm/aaaa)" value={formData.nascimento} onChange={handleChange} className={styles.input} maxLength={10}/>
+        <input
+          name="cpf"
+          value={formData.cpf}
+          disabled
+          className={styles.input}
+        />
+        <input
+          name="nascimento"
+          placeholder="Nascimento (dd/mm/aaaa)"
+          value={formData.nascimento}
+          onChange={handleChange}
+          className={styles.input}
+          maxLength={10}
+        />
         <ErrorMessage message={errors.nascimento} />
 
-        <input name="email" placeholder="Email" value={formData.email} onChange={handleChange} className={styles.input}/>
+        <input
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <ErrorMessage message={errors.email} />
 
-        <input name="celular" placeholder="Celular ((XX) XXXXX-XXXX)" value={formData.celular} onChange={handleChange} className={styles.input} maxLength={15}/>
+        <input
+          name="celular"
+          placeholder="Celular ((XX) XXXXX-XXXX)"
+          value={formData.celular}
+          onChange={handleChange}
+          className={styles.input}
+          maxLength={15}
+        />
         <ErrorMessage message={errors.celular} />
 
-        <input name="estado" placeholder="Estado" value={formData.estado} onChange={handleChange} className={styles.input}/>
+        <input
+          name="estado"
+          placeholder="Estado"
+          value={formData.estado}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <ErrorMessage message={errors.estado} />
 
-        <input name="cidade" placeholder="Cidade" value={formData.cidade} onChange={handleChange} className={styles.input}/>
+        <input
+          name="cidade"
+          placeholder="Cidade"
+          value={formData.cidade}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <ErrorMessage message={errors.cidade} />
 
-        <input name="senha" type="password" placeholder="Senha" value={formData.senha} onChange={handleChange} className={styles.input}/>
+        <input
+          name="senha"
+          type="password"
+          placeholder="Senha"
+          value={formData.senha}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <ErrorMessage message={errors.senha} />
 
-        <input name="confirmarSenha" type="password" placeholder="Confirmar Senha" value={formData.confirmarSenha} onChange={handleChange} className={styles.input}/>
+        <input
+          name="confirmarSenha"
+          type="password"
+          placeholder="Confirmar Senha"
+          value={formData.confirmarSenha}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <ErrorMessage message={errors.confirmarSenha} />
 
         <button className={styles.buttonPrimary} onClick={handleSubmit}>

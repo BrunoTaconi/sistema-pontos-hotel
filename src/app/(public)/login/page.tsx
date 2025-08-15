@@ -7,18 +7,34 @@ import Cookies from "js-cookie";
 
 export default function Login() {
   const router = useRouter();
-  //const [loginMethod, setLoginMethod] = useState<"email" | "cpf">("email");
   const [formData, setFormData] = useState({ identifier: "", senha: "" });
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = () => {
-    console.log(formData);
-    Cookies.set("token", "fake-token-do-usuario", { expires: 1 }); // Expira em 1 dia
-    router.push("/inicio");
+  const handleLogin = async () => {
+    setError("");
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        const { token } = await res.json();
+        Cookies.set("token", token, { expires: 1 });
+        router.push("/resgate");
+      } else {
+        const errorData = await res.json();
+        setError(errorData.error || "Falha no login.");
+      }
+    } catch (err) {
+      setError("Erro de conexão. Tente novamente.");
+    }
   };
 
   return (
@@ -26,38 +42,6 @@ export default function Login() {
       <img src="/logo.png" alt="Logo" className={styles.logo} />
       <div className={styles.card}>
         <h1 className={styles.title}>Bem-vindo de volta!</h1>
-        {/* <div style={{ marginBottom: "1rem" }}>
-          <button
-            className={styles.buttonSecondary}
-            onClick={() => setLoginMethod("email")}
-          >
-            Usar Email
-          </button>
-          <button
-            className={styles.buttonSecondary}
-            onClick={() => setLoginMethod("cpf")}
-          >
-            Usar CPF
-          </button>
-        </div> */}
-
-        {/* {loginMethod === "email" ? (
-          <input
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className={styles.input}
-          />
-        ) : (
-          <input
-            name="cpf"
-            placeholder="000.000.000-00"
-            value={formData.cpf}
-            onChange={handleChange}
-            className={styles.input}
-          />
-        )} */}
 
         <input
           name="identifier"
@@ -75,6 +59,12 @@ export default function Login() {
           onChange={handleChange}
           className={styles.input}
         />
+
+        {error && (
+          <p style={{ color: "red", fontSize: "0.8rem", marginBottom: "1rem" }}>
+            {error}
+          </p>
+        )}
 
         <button className={styles.buttonPrimary} onClick={handleLogin}>
           Entrar

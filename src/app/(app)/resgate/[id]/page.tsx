@@ -1,39 +1,53 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import styles from "../styles.module.css";
 import { Recompensa } from "@/generated/prisma";
 import Image from "next/image";
 
-const mockBeneficios: Recompensa[] = [
-  { id: 1, nome: "30% OFF em Itens de Decoração", descricao: "Transforme sua casa...", custo: 10, ativo: true, criadoEm: new Date(), imagem: "/decoracao/capa.jpg" },
-  { id: 2, nome: "Luminária relógio com carregador", descricao: "Luminária multifuncional...", custo: 20, ativo: true, criadoEm: new Date(), imagem: "/luminaria/capa.jpg" },
-  { id: 3, nome: "Máquina de café expresso", descricao: "Prepare espressos encorpados...", custo: 40, ativo: true, criadoEm: new Date(), imagem: "/maquina_cafe/capa.jpg" },
-  { id: 4, nome: "Iphone 13", descricao: "iPhone 13 com tela Super Retina...", custo: 40, ativo: true, criadoEm: new Date(), imagem: "/iphone/capa.jpg" },
-];
-
 const DetalheBeneficioContent = () => {
-  const searchParams = useSearchParams();
   const params = useParams();
   const router = useRouter();
   const [beneficio, setBeneficio] = useState<Recompensa | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [saldo, setSaldo] = useState(25); // Saldo mockado
+  const [saldo, setSaldo] = useState(25);
+  const idUsuario = 1;
 
   useEffect(() => {
-    if (params?.id) {
-      const found = mockBeneficios.find((b) => b.id === Number(params.id));
-      setBeneficio(found || null);
-    }
+    const fetchBeneficio = async () => {
+      if (params?.id) {
+        const res = await fetch(`/api/recompensas/${params.id}`);
+        const data = await res.json();
+        setBeneficio(data);
+      }
+    };
+    fetchBeneficio();
   }, [params.id]);
 
-  const handleResgateConfirmado = () => {
+  const handleResgateConfirmado = async () => {
     if (beneficio) {
-      setSaldo(saldo - beneficio.custo);
-      setShowConfirmModal(false);
-      setShowSuccessModal(true);
+      try {
+        const res = await fetch("/api/resgate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idUsuario, idRecompensa: beneficio.id }),
+        });
+
+        if (res.ok) {
+          setSaldo(saldo - beneficio.custo);
+          setShowConfirmModal(false);
+          setShowSuccessModal(true);
+        } else {
+          // Tratar erro de saldo insuficiente ou outro erro
+          const errorData = await res.json();
+          alert(errorData.error || "Não foi possível resgatar a recompensa.");
+          setShowConfirmModal(false);
+        }
+      } catch (error) {
+        alert("Erro de conexão ao tentar resgatar.");
+      }
     }
   };
 
@@ -58,7 +72,7 @@ const DetalheBeneficioContent = () => {
           {/* Imagens da galeria aqui, se houver */}
         </div>
         <div className={styles.detalheInfo}>
-          <p>Itens de Decoração</p>
+          <p>Recompensa</p>
           <h1>{beneficio.nome}</h1>
           <p>{beneficio.descricao}</p>
           <div className={styles.detalhePoints}>
@@ -68,8 +82,9 @@ const DetalheBeneficioContent = () => {
           <button
             onClick={() => setShowConfirmModal(true)}
             className={styles.detalheResgatarButton}
+            disabled={saldo < beneficio.custo}
           >
-            Resgatar
+            {saldo < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
           </button>
         </div>
       </div>
@@ -103,7 +118,7 @@ const DetalheBeneficioContent = () => {
               onClick={handleResgateConfirmado}
               className={styles.confirmResgateButton}
             >
-              Resgatar
+              Confirmar Resgate
             </button>
           </div>
         </div>

@@ -51,7 +51,7 @@ export default function PainelAdministrativo() {
   const columns: GridColDef[] = [
     { field: "nome", headerName: "Nome", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
-    { field: "papel", headerName: "Papel", flex: 0.7 },
+    { field: "hierarquia", headerName: "Papel", flex: 0.7 },
     { field: "numeroDocumento", headerName: "Identificação", flex: 1 },
     { field: "telefone", headerName: "Telefone", flex: 0.8 },
     {
