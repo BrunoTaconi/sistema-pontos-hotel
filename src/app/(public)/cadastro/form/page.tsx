@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 export default function CadastroForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const cpfParam = searchParams.get("cpf");
+  const cpfParam = searchParams?.get("cpf");
 
   const [errors, setErrors] = useState({
     nome: "",

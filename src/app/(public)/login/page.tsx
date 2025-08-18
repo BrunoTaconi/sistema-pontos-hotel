@@ -11,6 +11,7 @@ export default function Login() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
   const handleLogin = async () => {
     setError("");
     const payload = {
