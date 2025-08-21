@@ -20,6 +20,7 @@
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "cookie": "^1.0.2",
+    "fs": "^0.0.1-security",
     "helmet": "^8.1.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",

@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import styles from "../../styles.module.css";
-import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -17,7 +16,7 @@ export default function CadastroForm() {
     nome: "",
     nascimento: "",
     email: "",
-    celular: "",
+    telefone: "",
     estado: "",
     cidade: "",
     senha: "",
@@ -29,7 +28,7 @@ export default function CadastroForm() {
     cpf: "",
     nascimento: "",
     email: "",
-    celular: "",
+    telefone: "",
     estado: "",
     cidade: "",
     senha: "",
@@ -46,8 +45,8 @@ export default function CadastroForm() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateNascimento = (data: string) =>
     /^\d{2}\/\d{2}\/\d{4}$/.test(data);
-  const validateCelular = (celular: string) =>
-    /^\(\d{2}\) \d{5}-\d{4}$/.test(celular);
+  const validateTelefone = (telefone: string) =>
+    /^\(\d{2}\) \d{5}-\d{4}$/.test(telefone);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value } = e.target;
@@ -60,7 +59,7 @@ export default function CadastroForm() {
         .replace(/(\d{4})(\d)/, "$1");
     }
 
-    if (name === "celular") {
+    if (name === "telefone") {
       value = value
         .replace(/\D/g, "")
         .replace(/(\d{2})(\d)/, "($1) $2")
@@ -76,7 +75,7 @@ export default function CadastroForm() {
       nome: "",
       nascimento: "",
       email: "",
-      celular: "",
+      telefone: "",
       estado: "",
       cidade: "",
       senha: "",
@@ -96,8 +95,8 @@ export default function CadastroForm() {
       newErrors.email = "Formato de e-mail inválido.";
       hasError = true;
     }
-    if (!validateCelular(formData.celular)) {
-      newErrors.celular = "Formato de celular inválido. Use (XX) XXXXX-XXXX.";
+    if (!validateTelefone(formData.telefone)) {
+      newErrors.telefone = "Formato de telefone inválido. Use (XX) XXXXX-XXXX.";
       hasError = true;
     }
     if (!formData.estado.trim()) {
@@ -126,7 +125,7 @@ export default function CadastroForm() {
       nome: formData.nome,
       nascimento: formData.nascimento,
       email: formData.email,
-      celular: formData.celular,
+      telefone: formData.telefone,
       estado: formData.estado,
       cidade: formData.cidade,
       tipoDocumento: "CPF",
@@ -136,10 +135,10 @@ export default function CadastroForm() {
     };
 
     axios
-      .post("/api/register", dataToSubmit)
+      .post("/api/usuarios", dataToSubmit)
       .then(() => {
         toast.success("Conta criada com sucesso!");
-        router.push("/login");
+        router.push("/resgate");
       })
       .catch((error) => {
         toast.error("Algo deu errado. Tente novamente.");
@@ -211,14 +210,14 @@ export default function CadastroForm() {
         <ErrorMessage message={errors.email} />
 
         <input
-          name="celular"
-          placeholder="Celular ((XX) XXXXX-XXXX)"
-          value={formData.celular}
+          name="telefone"
+          placeholder="Telefone ((XX) XXXXX-XXXX)"
+          value={formData.telefone}
           onChange={handleChange}
           className={styles.input}
           maxLength={15}
         />
-        <ErrorMessage message={errors.celular} />
+        <ErrorMessage message={errors.telefone} />
 
         <input
           name="estado"

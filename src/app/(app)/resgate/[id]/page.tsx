@@ -1,27 +1,22 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./styles.module.css";
-import { Recompensa } from "@/generated/prisma";
 import Image from "next/image";
-//icons
 import { FaArrowRight } from "react-icons/fa6";
-import getCurrentUser from "@/app/actions/getUsuario"; 
+import styles from "./styles.module.css";
+import { Recompensa, Usuario } from "@prisma/client";
 
-const ResgatePage = async () => {
+// Este tipo é para o objeto que vem da server action
+type CurrentUser = (Omit<Usuario, "criadoEm"> & { createdAt: string }) | null;
+
+interface ResgateClientPageProps {
+  currentUser: CurrentUser;
+  beneficios: Recompensa[];
+}
+
+export default function ResgateClientPage({ currentUser, beneficios }: ResgateClientPageProps) {
   const router = useRouter();
-  const [beneficios, setBeneficios] = useState<Recompensa[]>([]);
-  const currentUser = await getCurrentUser();
-
-  useEffect(() => {
-    const fetchBeneficios = async () => {
-      const res = await fetch('/api/recompensas');
-      const data = await res.json();
-      setBeneficios(data);
-    };
-
-    fetchBeneficios();
-  }, []);
 
   const handleResgatarAgora = (beneficio: Recompensa) => {
     router.push(`/resgate/${beneficio.id}`);
@@ -29,16 +24,15 @@ const ResgatePage = async () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Olá, {currentUser?.nome}!</h1>
+      <h1 className={styles.title}>{currentUser ? `Olá, ${currentUser.nome}!` : 'Carregando...'}</h1>
       <p className={styles.subTitle}>
-        Confira os benefícios disponíveis для você.
+        Confira os benefícios disponíveis para você.
       </p>
       <div className={styles.header}>
         <div className={styles.pointsCard}>
           <p>Total de Pontos</p>
           <div className={styles.pointsValue}>
-          
-            <span>{currentUser?.saldoPontos} Real Points</span>
+            <span>{currentUser?.saldoPontos ?? 0} Real Points</span>
           </div>
         </div>
         <button className={styles.conferirButton}>
@@ -85,6 +79,4 @@ const ResgatePage = async () => {
       </div>
     </div>
   );
-};
-
-export default ResgatePage;
+}

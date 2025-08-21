@@ -6,46 +6,32 @@ import { Recompensa } from "@/generated/prisma";
 import Image from "next/image";
 //icons
 import { FaArrowRight } from "react-icons/fa6";
-import getCurrentUser from "@/app/actions/getUsuario";
 
-const ResgatePage = async () => {
+const ResgatePage = () => {
   const router = useRouter();
   const [beneficios, setBeneficios] = useState<Recompensa[]>([]);
   const [saldo, setSaldo] = useState(0);
   const [nomeUsuario, setNomeUsuario] = useState("Usuário");
-  const currentUser = await getCurrentUser();
-  
+
   useEffect(() => {
-    // Aqui você deve buscar o usuário logado para obter o nome e o saldo
-    // Por enquanto, vamos simular a busca
-    const fetchUserData = async () => {
-        // Simulação de busca de usuário (substituir pela lógica real)
-        // const res = await fetch('/api/me');
-        // const user = await res.json();
-        // setNomeUsuario(user.nome);
-        // setSaldo(user.saldo);
-        setNomeUsuario("Guilherme"); // Mocado
-        setSaldo(25); // Mocado
+    const fetchUser = async () => {
+      const res = await fetch("/api/usuario");
+      if (res.ok) {
+        const data = await res.json();
+        setNomeUsuario(data.nome);
+        setSaldo(data.saldoPontos);
+      }
     };
-
-    const fetchBeneficios = async () => {
-      const res = await fetch('/api/recompensas');
-      const data = await res.json();
-      setBeneficios(data);
-    };
-
-    fetchUserData();
-    fetchBeneficios();
+    fetchUser();
   }, []);
-
 
   const handleResgatarAgora = (beneficio: Recompensa) => {
     router.push(`/resgate/${beneficio.id}`);
   };
-  
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>{currentUser?.nome}</h1>
+      <h1 className={styles.title}>Olá, {nomeUsuario}</h1>
       <p className={styles.subTitle}>
         Confira os benefícios disponíveis para você.
       </p>

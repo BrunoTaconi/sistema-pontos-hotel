@@ -22,9 +22,6 @@ export default function PainelAdministrativo() {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(null);
   const [pontosAdicionar, setPontosAdicionar] = useState(20);
 
-  useEffect(() => {
-    fetchUsuarios();
-  }, [search]);
 
   const fetchUsuarios = async () => {
     const res = await fetch(`/api/usuarios?search=${search}`);
