@@ -3,12 +3,15 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import styles from "../../styles.module.css";
-import Cookies from "js-cookie";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function CadastroForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cpfParam = searchParams?.get("cpf");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState({
     nome: "",
@@ -35,12 +38,7 @@ export default function CadastroForm() {
 
   useEffect(() => {
     if (cpfParam) {
-      const formattedCpf = cpfParam
-        .replace(/\D/g, "")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-      setFormData((prev) => ({ ...prev, cpf: formattedCpf }));
+      setFormData((prev) => ({ ...prev, cpf: cpfParam }));
     }
   }, [cpfParam]);
 
@@ -122,53 +120,34 @@ export default function CadastroForm() {
     }
 
     setErrors(newErrors);
+    setIsLoading(true);
 
-    if (!hasError) {
-      try {
-        const res = await fetch("/api/usuarios", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nome: formData.nome,
-            email: formData.email,
-            tipoDocumento: "CPF",
-            numeroDocumento: formData.cpf.replace(/\D/g, ""),
-            hashSenha: formData.senha,
-            telefone: formData.celular.replace(/\D/g, ""),
-            nascimento: formData.nascimento,
-            estado: formData.estado,
-            cidade: formData.cidade,
-          }),
-        });
+    const dataToSubmit = {
+      nome: formData.nome,
+      nascimento: formData.nascimento,
+      email: formData.email,
+      celular: formData.celular,
+      estado: formData.estado,
+      cidade: formData.cidade,
+      tipoDocumento: "CPF",
+      numeroDocumento: formData.cpf.replace(/\D/g, ""),
+      senha: formData.senha,
+      senhaConfirmada: formData.confirmarSenha,
+    };
 
-        if (res.ok) {
-          const loginRes = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              identifier: formData.email,
-              senha: formData.senha,
-            }),
-          });
-
-          if (loginRes.ok) {
-            const { token } = await loginRes.json();
-            Cookies.set("token", token, { expires: 1 });
-            router.push("/resgate");
-          } else {
-            console.error("Erro ao fazer login após cadastro");
-            router.push("/login");
-          }
-        } else {
-          const errorData = await res.json();
-          console.error("Erro no cadastro:", errorData);
-        }
-      } catch (error) {
-        console.error("Erro de rede:", error);
-      }
-    }
+    axios
+      .post("/api/register", dataToSubmit)
+      .then(() => {
+        toast.success("Conta criada com sucesso!");
+        router.push("/login");
+      })
+      .catch((error) => {
+        toast.error("Algo deu errado. Tente novamente.");
+        console.error("Erro no cadastro:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const ErrorMessage = ({ message }: { message: string }) => {
@@ -205,7 +184,12 @@ export default function CadastroForm() {
         />
         <ErrorMessage message={errors.nome} />
 
-        <input name="cpf" value={formData.cpf} disabled className={styles.input} />
+        <input
+          name="cpf"
+          value={formData.cpf}
+          disabled
+          className={styles.input}
+        />
 
         <input
           name="nascimento"
@@ -274,10 +258,17 @@ export default function CadastroForm() {
         />
         <ErrorMessage message={errors.confirmarSenha} />
 
-        <button className={styles.buttonPrimary} onClick={handleSubmit}>
+        <button
+          className={styles.buttonPrimary}
+          onClick={handleSubmit}
+          disabled={isLoading}
+        >
           Finalizar Cadastro
         </button>
       </div>
     </div>
   );
+}
+function setIsLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
 }

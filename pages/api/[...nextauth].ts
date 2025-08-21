@@ -10,44 +10,49 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "email", type: "text" },
-        senha: { label: "senha", type: "senha" },
+        email: { label: "email", type: "text" }, // O NextAuth usa 'email' como padrão
+        password: { label: "password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.senha) {
-          throw new Error("Credenciais inválidas");
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Credenciais inválidas');
         }
-        const usuario = await prisma.usuario.findUnique({
+
+        // Procura o usuário por email ou por número de documento
+        const user = await prisma.usuario.findFirst({
           where: {
-            email: credentials.email
+            OR: [
+              { email: credentials.email },
+              { numeroDocumento: credentials.email }
+            ]
           }
         });
 
-        if (!usuario || !usuario?.hashSenha) {
-          throw new Error("Credenciais inválidas");
+        if (!user || !user?.hashSenha) {
+          throw new Error('Credenciais inválidas');
         }
 
         const isCorrectPassword = await bcrypt.compare(
-          credentials.senha,
-          usuario.hashSenha
+          credentials.password,
+          user.hashSenha
         );
-        
+
         if (!isCorrectPassword) {
-          throw new Error("Credenciais inválidas");
+          throw new Error('Credenciais inválidas');
         }
 
-        return usuario;
-      },
-    }),
+        return user;
+      }
+    })
   ],
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
   debug: process.env.NODE_ENV === 'development',
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
+}
 
-export default NextAuth;
+export default NextAuth(authOptions);
