@@ -10,19 +10,13 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
-
-type Usuario = {
-  id: number;
-  nome: string;
-  email: string;
-  papel: string;
-  numeroDocumento: string;
-  telefone: string;
-  saldo: number;
-};
+import { Usuario } from "../resgate/page";
+import { FaArrowLeft } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 export default function PainelAdministrativo() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [usuario, setUsuario] = useState<Usuario[]>();
   const [search, setSearch] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(
@@ -30,9 +24,20 @@ export default function PainelAdministrativo() {
   );
   const [pontosAdicionar, setPontosAdicionar] = useState(20);
 
+  const router = useRouter();
+
   useEffect(() => {
     fetchUsuarios();
+    fetchUsuario();
   }, [search]);
+
+  const fetchUsuario = async () => {
+    const res = await fetch("/api/usuarios/me");
+    if (res.ok) {
+      const data = await res.json();
+      setUsuario(data);
+    }
+  };
 
   const fetchUsuarios = async () => {
     const res = await fetch(`/api/usuarios?search=${search}`);
@@ -63,10 +68,10 @@ export default function PainelAdministrativo() {
     { field: "numeroDocumento", headerName: "Identificação", flex: 1 },
     { field: "telefone", headerName: "Telefone", flex: 0.8 },
     {
-      field: "saldo",
+      field: "saldoPontos",
       headerName: "Saldo",
       flex: 0.5,
-      valueFormatter: (params: any) => `${params?.value} rp`,
+      valueFormatter: (params: any) => `${params?.value}`,
     },
     {
       field: "acao",
@@ -86,35 +91,46 @@ export default function PainelAdministrativo() {
 
   return (
     <div className={styles.container}>
-      <Typography variant="h5" className={styles.title}>
-        Painel Administrativo
-      </Typography>
-
-      <TextField
-        placeholder="Buscar usuário (Nome, CPF, Email, ou Telefone)"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        fullWidth
-        className={styles.searchBar}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <FaSearch />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-      <div className={styles.tableContainer}>
-        <DataGrid
-          rows={usuarios}
-          columns={columns}
-          rowHeight={70}
-          pageSizeOptions={[5, 10, 20]}
-          disableRowSelectionOnClick
-          getRowId={(row) => row.id}
-        />
+      <div className={styles.backContainer}>
+        <button onClick={() => router.back()} className={styles.backButton}>
+          <FaArrowLeft size={17} />
+        </button>
+        <p>Painel Administrativo</p>
       </div>
+
+      {usuario?.hierarquia === "admin" ? (
+        <>
+          <TextField
+            placeholder="Buscar usuário (Nome, CPF, Email, ou Telefone)"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            fullWidth
+            className={styles.searchBar}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FaSearch />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <div className={styles.tableContainer}>
+            <DataGrid
+              rows={usuarios}
+              columns={columns}
+              rowHeight={70}
+              pageSizeOptions={[5, 10, 20]}
+              disableRowSelectionOnClick
+              getRowId={(row) => row.id}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <span>Você não possui permissão para visualizar esta tela.</span>
+        </>
+      )}
 
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <div className={styles.modal}>
@@ -153,7 +169,7 @@ export default function PainelAdministrativo() {
               />
               <TextField
                 label="Saldo Atual"
-                value={`${usuarioSelecionado.saldo} rp`}
+                value={`${usuarioSelecionado.saldoPontos} rp`}
                 fullWidth
                 disabled
                 className={styles.input}

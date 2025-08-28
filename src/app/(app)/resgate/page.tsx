@@ -9,10 +9,20 @@ import { recompensasMock, RecompensaMock } from "../data/mocks/recompensas";
 //icons
 import { FaArrowRight } from "react-icons/fa6";
 
+export type Usuario = {
+  id: number;
+  nome: string;
+  email: string;
+  papel: string;
+  numeroDocumento: string;
+  telefone: string;
+  saldoPontos: number;
+  hierarquia: string;
+};
+
 const ResgatePage = () => {
   const router = useRouter();
-  const [saldo, setSaldo] = useState(0);
-  const [nomeUsuario, setNomeUsuario] = useState("Usuário");
+  const [usuario, setUsuario] = useState<Usuario | null>();
   const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
   useEffect(() => {
@@ -20,21 +30,19 @@ const ResgatePage = () => {
       const res = await fetch("/api/usuarios/me");
       if (res.ok) {
         const data = await res.json();
-        setNomeUsuario(data.nome);
-        setSaldo(data.saldoPontos);
+        setUsuario(data);
       }
     };
-
     fetchUserData();
   }, []);
-
+  console.log("Usuario:", usuario);
   const handleResgatarAgora = (beneficio: RecompensaMock) => {
     router.push(`/resgate/${beneficio.id}`);
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Olá {nomeUsuario}!</h1>
+      <h1 className={styles.title}>Olá {usuario?.nome}!</h1>
       <p className={styles.subTitle}>
         Confira os benefícios disponíveis para você.
       </p>
@@ -42,7 +50,7 @@ const ResgatePage = () => {
         <div className={styles.pointsCard}>
           <p>Total de Pontos</p>
           <div className={styles.pointsValue}>
-            <span>{saldo} Real Points</span>
+            <span>{usuario?.saldoPontos} Real Points</span>
           </div>
         </div>
         <button className={styles.conferirButton}>
@@ -78,16 +86,16 @@ const ResgatePage = () => {
               </p>
               <button
                 onClick={() => {
-                  if (saldo >= beneficio.custo) {
+                  if (usuario?.saldoPontos >= beneficio.custo) {
                     handleResgatarAgora(beneficio);
                   } else {
                     alert("Você não tem pontos suficientes!");
                   }
                 }}
                 className={styles.resgatarButton}
-                disabled={saldo < beneficio.custo}
+                disabled={usuario?.saldoPontos < beneficio.custo}
               >
-                {saldo < beneficio.custo
+                {usuario?.saldoPontos < beneficio.custo
                   ? "Pontos insuficientes"
                   : "Resgatar Agora"}
                 <FaArrowRight size={18} />
