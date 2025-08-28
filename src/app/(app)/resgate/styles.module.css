@@ -1,5 +1,38 @@
-.container {
-  padding: 0rem;
+
+
+.detalheContainer {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.backContainer {
+  margin: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.backButton {
+  display: grid;
+  place-items: center;
+  background-color: var(--primary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--bg-primary);
+  cursor: pointer;
+  border: none;
+}
+
+.backContainer p {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .title {
@@ -96,6 +129,28 @@
   overflow: hidden;
 }
 
+.detailImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.thumbnailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.smallImageWrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
 .card h3 {
   font-size: 1rem;
   color: var(--text-primary);
@@ -134,31 +189,36 @@
   text-decoration: underline;
 }
 
-/* Estilos para a página de detalhes */
-.detalheContainer {
-  padding: 2rem;
-}
-
-.backButton {
-  background: none;
-  border: 1px solid var(--stroke);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 
 .detalheGrid {
+  padding: 2rem 10rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
 }
 
-.imageGallery {
-  /* Estilos para a galeria de imagens */
+@media (max-width: 1024px) {
+.detalheGrid {
+  padding: 1rem 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.images {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .mainImage {
@@ -166,25 +226,39 @@
   border-radius: var(--radius-lg);
 }
 
+.detalheInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 2rem;
+}
+
 .detalheInfo h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 0.5rem 0 1rem;
+  font-size: 1.8rem;
+  color: var(--text-primary);
 }
 
 .detalheInfo p {
   color: var(--text-secondary);
-  line-height: 1.6;
+}
+
+.topPart, .bottomPart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .detalhePoints {
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: center;
   gap: 0.5rem;
   color: var(--secondary);
   font-weight: bold;
-  margin: 1.5rem 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  height: 40px;
 }
 
 .detalheResgatarButton {
@@ -195,6 +269,8 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 500;
+  font-family: Poppins;
 }
 
 /* Estilos para os Modais */
@@ -213,7 +289,7 @@
 
 .modal {
   background: white;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: var(--radius-lg);
   width: 90%;
   max-width: 450px;
@@ -233,11 +309,12 @@
 
 .modal h2 {
   margin-bottom: 1rem;
+  font-size: 1.2rem;
 }
 
 .saldoInfo {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   margin: 2rem 0;
   background-color: var(--bg-secondary);
@@ -247,10 +324,11 @@
 
 .saldoInfo div {
   text-align: center;
+  width: 100px;
 }
 
 .saldoInfo span {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
@@ -263,10 +341,16 @@
   cursor: pointer;
   width: 100%;
   font-size: 1rem;
+  font-family: Poppins;
+}
+
+.resgatarButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .successIcon {
-  font-size: 3rem;
+  font-size: 2rem;
   color: green;
   width: 80px;
   height: 80px;
@@ -276,4 +360,11 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .detalheGrid {
+    padding: 1rem;
+    grid-template-columns: 1fr;
+  }
 }

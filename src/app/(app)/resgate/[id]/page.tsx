@@ -3,52 +3,36 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
 import styles from "../styles.module.css";
-import { Recompensa } from "@/generated/prisma";
 import Image from "next/image";
+import { recompensasMock, RecompensaMock } from "../../data/mocks/recompensas";
+//icons
+import { FaArrowLeft } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa6";
 
 const DetalheBeneficioContent = () => {
   const params = useParams();
   const router = useRouter();
-  const [beneficio, setBeneficio] = useState<Recompensa | null>(null);
+  const [beneficio, setBeneficio] = useState<RecompensaMock | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [saldo, setSaldo] = useState(25);
+  const [saldo, setSaldo] = useState(25); // mock do saldo do usuário
   const idUsuario = 1;
 
   useEffect(() => {
-    const fetchBeneficio = async () => {
-      if (params?.id) {
-        const res = await fetch(`/api/recompensas/${params.id}`);
-        const data = await res.json();
-        setBeneficio(data);
-      }
-    };
-    fetchBeneficio();
-  }, [params.id]);
-
-  const handleResgateConfirmado = async () => {
-    if (beneficio) {
-      try {
-        const res = await fetch("/api/resgate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ idUsuario, idRecompensa: beneficio.id }),
-        });
-
-        if (res.ok) {
-          setSaldo(saldo - beneficio.custo);
-          setShowConfirmModal(false);
-          setShowSuccessModal(true);
-        } else {
-          // Tratar erro de saldo insuficiente ou outro erro
-          const errorData = await res.json();
-          alert(errorData.error || "Não foi possível resgatar a recompensa.");
-          setShowConfirmModal(false);
-        }
-      } catch (error) {
-        alert("Erro de conexão ao tentar resgatar.");
-      }
+    if (params?.id) {
+      const found = recompensasMock.find(
+        (item) => item.id === Number(params.id)
+      );
+      if (found) setBeneficio(found);
     }
+  }, [params]);
+
+  const handleResgateConfirmado = () => {
+    setShowConfirmModal(false);
+    setShowSuccessModal(true);
+    setSaldo((prev) => prev - (beneficio?.custo || 0));
   };
 
   if (!beneficio) {
@@ -57,38 +41,74 @@ const DetalheBeneficioContent = () => {
 
   return (
     <div className={styles.detalheContainer}>
-      <button onClick={() => router.back()} className={styles.backButton}>
-        &larr; Voltar
-      </button>
-      <div className={styles.detalheGrid}>
-        <div className={styles.imageGallery}>
-          <Image
-            src={beneficio.imagem || "/placeholder.png"}
-            alt={beneficio.nome}
-            width={500}
-            height={400}
-            className={styles.mainImage}
-          />
-          {/* Imagens da galeria aqui, se houver */}
-        </div>
-        <div className={styles.detalheInfo}>
-          <p>Recompensa</p>
-          <h1>{beneficio.nome}</h1>
-          <p>{beneficio.descricao}</p>
-          <div className={styles.detalhePoints}>
-            <Image src="/logo.png" alt="Real Points" width={20} height={20} />
-            <span>{beneficio.custo} Real Points</span>
+      <div className={styles.backContainer}>
+        <button onClick={() => router.back()} className={styles.backButton}>
+          <FaArrowLeft size={17} />
+        </button>
+        <p>{beneficio.nome}</p>
+      </div>
+
+      <div className={styles.contentContainer}>
+        <div className={styles.detalheGrid}>
+          <div className={styles.images}>
+            <div className={styles.thumbnailRow}>
+              {beneficio.imagens.slice(2).map((img, idx) => (
+                <div className={styles.smallImageWrapper} key={idx}>
+                  <Image
+                    key={idx}
+                    src={img}
+                    alt={`${beneficio.nome} foto ${idx + 1}`}
+                    fill
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: "var(--radius-sm)",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className={styles.detailImageWrapper}>
+              <Image
+                src={beneficio.imagens[0] || "/placeholder.png"}
+                alt={beneficio.nome}
+                fill
+                style={{
+                  objectFit: "contain",
+                  borderRadius: "var(--radius-sm)",
+                }}
+              />
+            </div>
           </div>
-          <button
-            onClick={() => setShowConfirmModal(true)}
-            className={styles.detalheResgatarButton}
-            disabled={saldo < beneficio.custo}
-          >
-            {saldo < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
-          </button>
+
+          <div className={styles.detalheInfo}>
+            <div className={styles.topPart}>
+              <p>Recompensa</p>
+              <h1>{beneficio.nome}</h1>
+              <p>{beneficio.descricao}</p>
+            </div>
+            <div className={styles.bottomPart}>
+              <div className={styles.detalhePoints}>
+                <Image
+                  src="/icon.svg"
+                  alt="Real Points"
+                  width={20}
+                  height={20}
+                />
+                <span>{beneficio.custo} Real Points</span>
+              </div>
+              <button
+                onClick={() => setShowConfirmModal(true)}
+                className={styles.detalheResgatarButton}
+                disabled={saldo < beneficio.custo}
+              >
+                {saldo < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
+      {/* Modal de Confirmação */}
       {showConfirmModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -96,19 +116,22 @@ const DetalheBeneficioContent = () => {
               onClick={() => setShowConfirmModal(false)}
               className={styles.closeModalButton}
             >
-              X
+              <IoClose />
             </button>
             <h2>Resgatar Recompensa</h2>
             <p>
-              Essa recompensa custa {beneficio.custo} Real Points. Seu novo
-              saldo será de:
+              Essa recompensa custa{" "}
+              <strong>{beneficio.custo} Real Points</strong> . Seu novo saldo
+              será de:
             </p>
             <div className={styles.saldoInfo}>
               <div>
                 <p>Antigo</p>
                 <span>{saldo} rp</span>
               </div>
-              <span>&darr;</span>
+              <span>
+                <FaArrowRight />
+              </span>
               <div>
                 <p>Novo Saldo</p>
                 <span>{saldo - beneficio.custo} rp</span>
@@ -124,11 +147,14 @@ const DetalheBeneficioContent = () => {
         </div>
       )}
 
+      {/* Modal de Sucesso */}
       {showSuccessModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <div className={styles.successIcon}>✓</div>
             <h2>Recompensa resgatada com sucesso!</h2>
+            <div className={styles.successIcon}>
+              <FaCheck />
+            </div>
             <button
               onClick={() => {
                 setShowSuccessModal(false);

@@ -2,7 +2,13 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Modal, TextField, Button, Typography, InputAdornment } from "@mui/material";
+import {
+  Modal,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 
 type Usuario = {
@@ -19,7 +25,9 @@ export default function PainelAdministrativo() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [search, setSearch] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(null);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(
+    null
+  );
   const [pontosAdicionar, setPontosAdicionar] = useState(20);
 
   useEffect(() => {
@@ -58,7 +66,7 @@ export default function PainelAdministrativo() {
       field: "saldo",
       headerName: "Saldo",
       flex: 0.5,
-      valueFormatter: (params:any) => `${params.value} rp`,
+      valueFormatter: (params: any) => `${params?.value} rp`,
     },
     {
       field: "acao",
@@ -101,6 +109,7 @@ export default function PainelAdministrativo() {
         <DataGrid
           rows={usuarios}
           columns={columns}
+          rowHeight={70}
           pageSizeOptions={[5, 10, 20]}
           disableRowSelectionOnClick
           getRowId={(row) => row.id}
@@ -158,7 +167,9 @@ export default function PainelAdministrativo() {
                 fullWidth
                 className={styles.input}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">💰</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">💰</InputAdornment>
+                  ),
                 }}
               />
 

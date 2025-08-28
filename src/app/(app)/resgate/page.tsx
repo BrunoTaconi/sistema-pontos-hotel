@@ -2,45 +2,36 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
-import { Recompensa } from "@/generated/prisma";
+import { Recompensa } from "@prisma/client";
 import Image from "next/image";
+import { recompensasMock, RecompensaMock } from "../data/mocks/recompensas";
+
 //icons
 import { FaArrowRight } from "react-icons/fa6";
 
 const ResgatePage = () => {
   const router = useRouter();
-  const [beneficios, setBeneficios] = useState<Recompensa[]>([]);
   const [saldo, setSaldo] = useState(0);
   const [nomeUsuario, setNomeUsuario] = useState("Usuário");
+  const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
   useEffect(() => {
-    // Aqui você deve buscar o usuário logado para obter o nome e o saldo
-    // Por enquanto, vamos simular a busca
     const fetchUserData = async () => {
-        // Simulação de busca de usuário (substituir pela lógica real)
-        // const res = await fetch('/api/me');
-        // const user = await res.json();
-        // setNomeUsuario(user.nome);
-        // setSaldo(user.saldo);
-        setNomeUsuario("Guilherme"); // Mocado
-        setSaldo(25); // Mocado
-    };
-
-    const fetchBeneficios = async () => {
-      const res = await fetch('/api/recompensas');
-      const data = await res.json();
-      setBeneficios(data);
+      const res = await fetch("/api/usuarios/me");
+      if (res.ok) {
+        const data = await res.json();
+        setNomeUsuario(data.nome);
+        setSaldo(data.saldoPontos);
+      }
     };
 
     fetchUserData();
-    fetchBeneficios();
   }, []);
 
-
-  const handleResgatarAgora = (beneficio: Recompensa) => {
+  const handleResgatarAgora = (beneficio: RecompensaMock) => {
     router.push(`/resgate/${beneficio.id}`);
   };
-  
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Olá {nomeUsuario}!</h1>
@@ -66,7 +57,7 @@ const ResgatePage = () => {
             <div key={beneficio.id} className={styles.card}>
               <div className={styles.imageWrapper}>
                 <Image
-                  src={beneficio.imagem || "/placeholder.png"}
+                  src={beneficio.imagens[0] || "/placeholder.png"}
                   alt={beneficio.nome}
                   fill
                   style={{
@@ -86,10 +77,19 @@ const ResgatePage = () => {
                 {beneficio.custo} Real Points
               </p>
               <button
-                onClick={() => handleResgatarAgora(beneficio)}
+                onClick={() => {
+                  if (saldo >= beneficio.custo) {
+                    handleResgatarAgora(beneficio);
+                  } else {
+                    alert("Você não tem pontos suficientes!");
+                  }
+                }}
                 className={styles.resgatarButton}
+                disabled={saldo < beneficio.custo}
               >
-                Resgatar Agora
+                {saldo < beneficio.custo
+                  ? "Pontos insuficientes"
+                  : "Resgatar Agora"}
                 <FaArrowRight size={18} />
               </button>
             </div>
