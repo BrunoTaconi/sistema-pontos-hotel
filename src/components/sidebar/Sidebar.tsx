@@ -15,6 +15,7 @@ import { TbHelpHexagon } from "react-icons/tb";
 import { TbHelpHexagonFilled } from "react-icons/tb";
 import { PiSignOutBold } from "react-icons/pi";
 import { RiAdminFill } from "react-icons/ri";
+import { useState } from "react";
 
 const menuItems = [
   {
@@ -35,7 +36,7 @@ const menuItems = [
     icon: <HiOutlineUser size={18} />,
     iconFill: <HiUser size={18} />,
   },
-    {
+  {
     label: "Painel Administrativo",
     href: "/administracao",
     icon: <RiAdminFill size={18} />,
@@ -52,6 +53,15 @@ const menuItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [usuario, setUsuario] = useState();
+
+  const fetchUsuario = async () => {
+    const res = await fetch("/api/usuarios/me");
+    if (res.ok) {
+      const data = await res.json();
+      setUsuario(data);
+    }
+  };
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -68,6 +78,27 @@ export default function Sidebar() {
         <ul className={styles.navList}>
           {menuItems.map((item, idx) => {
             const isActive = pathname === item.href;
+            {
+              usuario?.hierarquia === "admin" &&
+              item.label === "Painel Administrativo" ? (
+                <>
+                  <Link
+                    href={item.href}
+                    key={idx}
+                    className={`${styles.navItem} ${
+                      isActive ? styles.navItemActive : ""
+                    }`}
+                  >
+                    <span className={styles.navItemIcon}>
+                      {isActive ? <>{item.iconFill}</> : <>{item.icon}</>}
+                    </span>
+                    <>{item.label}</>
+                  </Link>
+                </>
+              ) : (
+                <></>
+              );
+            }
             return (
               <Link
                 href={item.href}
