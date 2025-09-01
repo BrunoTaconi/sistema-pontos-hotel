@@ -5,40 +5,25 @@ import styles from "./styles.module.css";
 import { Recompensa } from "@prisma/client";
 import Image from "next/image";
 import { recompensasMock, RecompensaMock } from "../data/mocks/recompensas";
+import { useUser } from "@/app/contexts/UserContext";
 
 //icons
 import { FaArrowRight } from "react-icons/fa6";
 
-export type Usuario = {
-  id: number;
-  nome: string;
-  email: string;
-  papel: string;
-  numeroDocumento: string;
-  telefone: string;
-  saldoPontos: number;
-  hierarquia: string;
-};
+
+
 
 const ResgatePage = () => {
   const router = useRouter();
-  const [usuario, setUsuario] = useState<Usuario | null>();
+  const { usuario, loading } = useUser();
   const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const res = await fetch("/api/usuarios/me");
-      if (res.ok) {
-        const data = await res.json();
-        setUsuario(data);
-      }
-    };
-    fetchUserData();
-  }, []);
-  console.log("Usuario:", usuario);
+ 
   const handleResgatarAgora = (beneficio: RecompensaMock) => {
     router.push(`/resgate/${beneficio.id}`);
   };
+
+  if (loading) return <p>Carregando...</p>;
 
   return (
     <div className={styles.container}>
@@ -86,16 +71,16 @@ const ResgatePage = () => {
               </p>
               <button
                 onClick={() => {
-                  if (usuario?.saldoPontos >= beneficio.custo) {
+                  if (usuario!.saldoPontos >= beneficio.custo) {
                     handleResgatarAgora(beneficio);
                   } else {
                     alert("Você não tem pontos suficientes!");
                   }
                 }}
                 className={styles.resgatarButton}
-                disabled={usuario?.saldoPontos < beneficio.custo}
+                disabled={usuario!.saldoPontos < beneficio.custo}
               >
-                {usuario?.saldoPontos < beneficio.custo
+                {usuario!.saldoPontos < beneficio.custo
                   ? "Pontos insuficientes"
                   : "Resgatar Agora"}
                 <FaArrowRight size={18} />

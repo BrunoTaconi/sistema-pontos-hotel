@@ -17,7 +17,7 @@ const DetalheBeneficioContent = () => {
   const [beneficio, setBeneficio] = useState<RecompensaMock | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [saldo, setSaldo] = useState(25); // mock do saldo do usuário
+  const [saldo, setSaldo] = useState(25); 
   const idUsuario = 1;
 
   useEffect(() => {

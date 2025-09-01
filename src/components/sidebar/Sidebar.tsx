@@ -16,6 +16,7 @@ import { TbHelpHexagonFilled } from "react-icons/tb";
 import { PiSignOutBold } from "react-icons/pi";
 import { RiAdminFill } from "react-icons/ri";
 import { useState } from "react";
+import { useUser } from "@/app/contexts/UserContext";
 
 const menuItems = [
   {
@@ -41,6 +42,7 @@ const menuItems = [
     href: "/administracao",
     icon: <RiAdminFill size={18} />,
     iconFill: <RiAdminFill size={18} />,
+    adminOnly: true,
   },
   {
     label: "Ajuda",
@@ -53,15 +55,7 @@ const menuItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [usuario, setUsuario] = useState();
-
-  const fetchUsuario = async () => {
-    const res = await fetch("/api/usuarios/me");
-    if (res.ok) {
-      const data = await res.json();
-      setUsuario(data);
-    }
-  };
+  const { usuario, loading } = useUser();
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -76,44 +70,28 @@ export default function Sidebar() {
       </div>
       <nav>
         <ul className={styles.navList}>
-          {menuItems.map((item, idx) => {
-            const isActive = pathname === item.href;
-            {
-              usuario?.hierarquia === "admin" &&
-              item.label === "Painel Administrativo" ? (
-                <>
-                  <Link
-                    href={item.href}
-                    key={idx}
-                    className={`${styles.navItem} ${
-                      isActive ? styles.navItemActive : ""
-                    }`}
-                  >
-                    <span className={styles.navItemIcon}>
-                      {isActive ? <>{item.iconFill}</> : <>{item.icon}</>}
-                    </span>
-                    <>{item.label}</>
-                  </Link>
-                </>
-              ) : (
-                <></>
+          {menuItems
+            .filter(
+              (item) => !item.adminOnly || usuario?.hierarquia === "admin"
+            ) 
+            .map((item, idx) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  href={item.href}
+                  key={idx}
+                  className={`${styles.navItem} ${
+                    isActive ? styles.navItemActive : ""
+                  }`}
+                >
+                  <span className={styles.navItemIcon}>
+                    {isActive ? item.iconFill : item.icon}
+                  </span>
+                  {item.label}
+                </Link>
               );
-            }
-            return (
-              <Link
-                href={item.href}
-                key={idx}
-                className={`${styles.navItem} ${
-                  isActive ? styles.navItemActive : ""
-                }`}
-              >
-                <span className={styles.navItemIcon}>
-                  {isActive ? <>{item.iconFill}</> : <>{item.icon}</>}
-                </span>
-                <>{item.label}</>
-              </Link>
-            );
-          })}
+            })}
+
           <a href="/login" onClick={handleLogout} className={styles.navItem}>
             <span className={styles.navItemIcon}>
               <PiSignOutBold size={18} />

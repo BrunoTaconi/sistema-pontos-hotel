@@ -48,8 +48,9 @@
 .addButton {
   background-color: #d4a256 !important;
   color: white !important;
-  font-weight: bold !important;
+  font-weight: 400 !important;
   text-transform: none !important;
+  font-size: 0.9rem !important; 
 }
 
 .modal {
@@ -65,7 +66,10 @@
 }
 
 .modalTitle {
-  margin-bottom: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary)
 }
 
 .input {
