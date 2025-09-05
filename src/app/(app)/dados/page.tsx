@@ -2,19 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import styles from "./styles.module.css";
+import Image from "next/image";
 import { FaUser, FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
 
-// Você precisará definir o tipo para os dados do usuário.
-// Adapte isso para corresponder à estrutura do seu banco de dados.
 interface UserData {
   nome: string;
   email: string;
-  telefone?: string; // Opcional
-  endereco?: string; // Opcional
-  // Adicione outros campos do usuário aqui.
+  telefone?: string;
+  numeroDocumento?: string;
+  /* fotoPerfil?: string; // Add a property for the profile picture URL*/
 }
 
-const MeusDadosPage = () => {
+const MyDataPage = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,44 +51,51 @@ const MeusDadosPage = () => {
       
 
       {userData && (
-        <div className={styles.dataCard}>
-          <div className={styles.dataRow}>
-            <FaUser size={20} className={styles.icon} />
-            <div className={styles.dataText}>
-              <span className={styles.label}>Nome:</span>
-              <p>{userData.nome}</p>
-            </div>
+        <div className={styles.cardsWrapper}>
+          {/* Card 1: Profile Picture and Name */}
+          <div className={`${styles.card} ${styles.profileCard}`}>
+            <Image
+              src={"/standard_profilepic.png"}
+              alt="Foto de Perfil"
+              width={100}
+              height={100}
+              className={styles.profileImage}
+            />
+            <h2>{userData.nome}</h2>
           </div>
-          <div className={styles.dataRow}>
-            <FaEnvelope size={20} className={styles.icon} />
-            <div className={styles.dataText}>
-              <span className={styles.label}>Email:</span>
-              <p>{userData.email}</p>
-            </div>
-          </div>
-          {userData.telefone && (
+
+          {/* Card 2: Other Information */}
+          <div className={styles.card}>
             <div className={styles.dataRow}>
-              <FaPhone size={20} className={styles.icon} />
+              <FaEnvelope size={20} className={styles.icon} />
               <div className={styles.dataText}>
-                <span className={styles.label}>Telefone:</span>
-                <p>{userData.telefone}</p>
+                <span className={styles.label}>Email:</span>
+                <p>{userData.email}</p>
               </div>
             </div>
-          )}
-          {userData.endereco && (
-            <div className={styles.dataRow}>
-              <FaMapMarkerAlt size={20} className={styles.icon} />
-              <div className={styles.dataText}>
-                <span className={styles.label}>Endereço:</span>
-                <p>{userData.endereco}</p>
+            {userData.telefone && (
+              <div className={styles.dataRow}>
+                <FaPhone style={{ transform: "rotate(90deg)" }} size={20} fa-rotate-180 className={styles.icon} />
+                <div className={styles.dataText}>
+                  <span className={styles.label}>Telefone:</span>
+                  <p>{userData.telefone}</p>
+                </div>
               </div>
-            </div>
-          )}
-          {/* Adicione mais campos aqui, seguindo o mesmo padrão */}
+            )}
+            {userData.numeroDocumento && (
+              <div className={styles.dataRow}>
+                <FaMapMarkerAlt size={20} className={styles.icon} />
+                <div className={styles.dataText}>
+                  <span className={styles.label}>Documento:</span>
+                  <p>{userData.numeroDocumento}</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default MeusDadosPage;
+export default MyDataPage;
