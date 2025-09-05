@@ -28,7 +28,7 @@ export default function Login() {
       if (res.ok) {
         const { token } = await res.json();
         Cookies.set("token", token, { expires: 1 });
-        router.push("/resgate");
+        router.push("/inicio");
       } else {
         const errorData = await res.json();
         setError(errorData.error || errorData.message || "Falha no login.");

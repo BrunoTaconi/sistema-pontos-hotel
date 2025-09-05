@@ -17,7 +17,7 @@ const DetalheBeneficioContent = () => {
   const [beneficio, setBeneficio] = useState<RecompensaMock | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [saldo, setSaldo] = useState(25); // mock do saldo do usuário
+  const [saldo, setSaldo] = useState(25);
   const idUsuario = 1;
 
   useEffect(() => {
@@ -29,11 +29,7 @@ const DetalheBeneficioContent = () => {
     }
   }, [params]);
 
-  const handleResgateConfirmado = () => {
-    setShowConfirmModal(false);
-    setShowSuccessModal(true);
-    setSaldo((prev) => prev - (beneficio?.custo || 0));
-  };
+
 
   if (!beneficio) {
     return <div>Carregando...</div>;
@@ -121,9 +117,13 @@ const DetalheBeneficioContent = () => {
             <h2>Resgatar Recompensa</h2>
             <p>
               Essa recompensa custa{" "}
-              <strong>{beneficio.custo} Real Points</strong> . Seu novo saldo
-              será de:
+              <strong>{beneficio.custo} Real Points</strong>.<b></b>
             </p>
+            <p>
+              Para resgatá-la, basta ir até a recepção e utilizar seu benefício.
+            </p>
+            <br />
+            <p>Após o resgate seu novo saldo será de:</p>
             <div className={styles.saldoInfo}>
               <div>
                 <p>Antigo</p>
@@ -138,10 +138,11 @@ const DetalheBeneficioContent = () => {
               </div>
             </div>
             <button
-              onClick={handleResgateConfirmado}
+              onClick={() => setShowConfirmModal(false)}
+              //onClick={handleResgateConfirmado}
               className={styles.confirmResgateButton}
             >
-              Confirmar Resgate
+              Entendido
             </button>
           </div>
         </div>
@@ -158,7 +159,7 @@ const DetalheBeneficioContent = () => {
             <button
               onClick={() => {
                 setShowSuccessModal(false);
-                router.push("/resgate");
+                router.push("/inicio");
               }}
               className={styles.confirmResgateButton}
             >
