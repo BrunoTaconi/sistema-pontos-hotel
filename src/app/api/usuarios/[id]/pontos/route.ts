@@ -1,12 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+//import { Resend } from "resend";
+import nodemailer from "nodemailer";
+//const resend = new Resend(process.env.RESEND_API_KEY);
 
 type Params = {
   params: { id: string };
 };
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.uni5.net",
+  port: 587, // ou 587 se não usar SSL
+  secure: false, // true = 465, false = 587
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD, 
+  },
+});
 
 export async function POST(request: Request, { params }: Params) {
   try {
@@ -50,17 +60,21 @@ export async function POST(request: Request, { params }: Params) {
     });
 
     if (pontos > 0 && usuario.email) {
-      await resend.emails.send({
-        from: "noreply@hotelrealcabofrio.com",
-        to: usuario.email,
-        subject: "Você recebeu pontos! 🎉",
-        html: `
-         <p>Olá <b>${usuario.nome}</b>,</p>
-          <p>Você acabou de receber <b>${pontos} pontos</b> em sua conta.</p>
-          <p>Agora seu saldo total é de <b>${usuario.saldoPontos} pontos</b>.</p>
-          <p>Continue participando e acumulando! 🚀</p>
-            `,
-      });
+      try {
+        await transporter.sendMail({
+          from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
+          to: usuario.email,
+          subject: "Você recebeu pontos! 🎉",
+          html: `
+        <p>Olá <b>${usuario.nome}</b>,</p>
+        <p>Você acabou de receber <b>${pontos} pontos</b> em sua conta.</p>
+        <p>Agora seu saldo total é de <b>${usuario.saldoPontos} pontos</b>.</p>
+        <p>Continue participando e acumulando! 🚀</p>
+      `,
+        });
+      } catch (emailError) {
+        console.error("Erro ao enviar email:", emailError);
+      }
     }
 
     return NextResponse.json(usuario, { status: 200 });

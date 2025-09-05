@@ -156,7 +156,7 @@ export default function CadastroForm() {
           if (loginRes.ok) {
             const { token } = await loginRes.json();
             Cookies.set("token", token, { expires: 1 });
-            router.push("/resgate");
+            router.push("/inicio");
           } else {
             console.error("Erro ao fazer login após cadastro");
             router.push("/login");

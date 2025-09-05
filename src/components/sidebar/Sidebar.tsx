@@ -26,12 +26,6 @@ const menuItems = [
     iconFill: <IoHome size={18} />,
   },
   {
-    label: "Resgate",
-    href: "/resgate",
-    icon: <PiCoinsBold size={18} />,
-    iconFill: <PiCoinsFill size={18} />,
-  },
-  {
     label: "Meus Dados",
     href: "/dados",
     icon: <HiOutlineUser size={18} />,

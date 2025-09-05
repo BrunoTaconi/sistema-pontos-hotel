@@ -23,7 +23,7 @@ export default function PainelAdministrativo() {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState<Usuario | null>(
     null
   );
-  const [pontosAdicionar, setPontosAdicionar] = useState(20);
+  const [pontosAdicionar, setPontosAdicionar] = useState(0);
 
   const { usuario, loading } = useUser();
 
@@ -111,7 +111,7 @@ export default function PainelAdministrativo() {
           className={styles.addButton}
           onClick={() => handleOpenModal(params.row)}
         >
-          Alterar quantidade
+          Alterar pontuação
         </Button>
       ),
     },
@@ -266,7 +266,7 @@ export default function PainelAdministrativo() {
               />
 
               <TextField
-                label="Quantidade de pontos"
+                label="Quantidade de pontos adicionar/remover"
                 type="number"
                 inputProps={{ min: 0 }}
                 value={pontosAdicionar}
