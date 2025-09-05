@@ -21,11 +21,11 @@ export const recompensasMock: RecompensaMock[] = [
     criadoEm: new Date(),
     imagens: [
       "/decoracao/capa.jpg",
-      "/decoracao/foto1.jpg",
-      "/decoracao/foto2.jpg",
-      "/decoracao/foto3.jpg",
-      "/decoracao/foto4.jpg",
-      "/decoracao/foto5.jpg",
+      "/decoracao/capa.jpg",
+      "/decoracao/capa.jpg",
+      "/decoracao/capa.jpg",
+      "/decoracao/capa.jpg",
+      "/decoracao/capa.jpg"
     ],
   },
   {
@@ -56,12 +56,11 @@ export const recompensasMock: RecompensaMock[] = [
     ativo: true,
     criadoEm: new Date(),
     imagens: [
-      "/maquina_cafe/capa.jpg",
-      "/maquina_cafe/foto1.jpg",
-      "/maquina_cafe/foto2.jpg",
-      "/maquina_cafe/foto3.jpg",
-      "/maquina_cafe/foto4.jpg",
-      "/maquina_cafe/foto5.jpg",
+      "/maquina_cafe/capa_cafeteira.png",
+      "/maquina_cafe/foto1_cafeteira.png",
+      "/maquina_cafe/foto2_cafeteira.png",
+      "/maquina_cafe/foto3_cafeteira.png",
+      "/maquina_cafe/foto4_cafeteira.png"
     ],
   },
   {

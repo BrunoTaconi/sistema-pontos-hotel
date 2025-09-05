@@ -33,6 +33,8 @@ const InicioPage = () => {
       </p>
       <div className={styles.header}>
         <div className={styles.pointsCard}>
+          <Image alt="Real point Coin" src={"/rp_coin.png"} width={32}
+                  height={32}/>
           <p>Total de Pontos</p>
           <div className={styles.pointsValue}>
             <span>{usuario?.saldoPontos} Real Points</span>
