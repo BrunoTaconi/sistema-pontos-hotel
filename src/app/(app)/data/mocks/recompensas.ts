@@ -14,8 +14,7 @@ export const recompensasMock: RecompensaMock[] = [
     id: 1,
     nome: "30% OFF em Itens de Decoração",
     descricao:
-      "Aproveite um desconto exclusivo de 30% em itens de decoração selecionados para renovar sua casa com estilo e economia. " +
-      "Escolha entre vasos, quadros, luminárias e outros acessórios que vão transformar qualquer ambiente, deixando-o mais aconchegante e moderno.",
+      "A decoração do quarto de hotel com champagne, chocolate e velas é um convite ao romance e à celebração. Luz suave, aromas doces e o brilho delicado das velas criam um cenário único, onde cada detalhe exala carinho. É mais que uma estadia, é uma experiência.",
     custo: 10,
     ativo: true,
     criadoEm: new Date(),
@@ -32,8 +31,8 @@ export const recompensasMock: RecompensaMock[] = [
     id: 2,
     nome: "Luminária Relógio com Carregador",
     descricao:
-      "Praticidade e inovação em um só produto. A Luminária Relógio com Carregador une iluminação aconchegante, despertador digital e carregamento sem fio para seus dispositivos. " +
-      "Ideal para sua mesa de cabeceira ou escritório, trazendo tecnologia e design minimalista ao seu dia a dia.",
+      "A luminária relógio com carregador embutido é o equilíbrio perfeito entre funcionalidade e elegância. Ela ilumina seus momentos, marca o tempo com precisão e ainda recarrega seus dispositivos , tudo em um só design moderno e inteligente. Ideal para quem valoriza praticidade sem abrir mão de estilo, transforma qualquer ambiente em um espaço de conforto e inovação.",
+
     custo: 20,
     ativo: true,
     criadoEm: new Date(),
@@ -50,8 +49,7 @@ export const recompensasMock: RecompensaMock[] = [
     id: 3,
     nome: "Máquina de Café Expresso",
     descricao:
-      "Desperte seus sentidos com um café de qualidade profissional no conforto da sua casa. " +
-      "A Máquina de Café Expresso prepara bebidas encorpadas e saborosas com rapidez e praticidade, ideal para os amantes de café que buscam aroma e sabor em cada xícara.",
+      "A máquina de fazer café é o início de grandes momentos em um simples toque. Com aroma envolvente e sabor encorpado, ela transforma grãos em experiências, silêncio em aconchego e rotina em ritual. Cada xícara é um abraço quente, preparado com precisão e paixão. Porque não é só café ,é energia, pausa e inspiração.",
     custo: 40,
     ativo: true,
     criadoEm: new Date(),
