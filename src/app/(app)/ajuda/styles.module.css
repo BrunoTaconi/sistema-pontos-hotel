@@ -1,0 +1,94 @@
+/* styles.module.css */
+.backContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 2rem; /* Espaço entre o cabeçalho e os cards */
+}
+
+.backContainer p {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #333; /* Cor do título */
+}
+
+.backButton {
+  display: grid;
+  place-items: center;
+  background-color: rgba(37, 87, 123, 1); /* Cor principal do seu tema */
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  cursor: pointer;
+  border: none;
+}
+/* Estilos para o contêiner principal da tela de ajuda */
+.ajudaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+/* Estilo para os cards de informação */
+.ajudaCard {
+  background-color: #ffffff; /* Fundo branco */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.section h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid rgba(37, 87, 123, 1); /* Linha de destaque para a seção */
+  padding-left: 0.5rem;
+}
+
+.section p {
+  color: #555;
+  line-height: 1.4;
+  margin-left: 0.8rem;
+}
+
+.pointsInfo {
+  background-color: #fcfee0; /* Um fundo leve para destacar o valor */
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+  margin-left: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.pointsInfo p {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: rgba(216, 170, 83, 1);
+}
+
+.pointsList {
+  list-style: none; /* Remove os marcadores de lista padrão */
+  padding: 0;
+  margin: 0;
+  margin-left: 0.8rem;
+}
+
+.pointsList li {
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.pointsList li span {
+  font-weight: bold;
+  color: rgba(216, 170, 83, 1);
+}
