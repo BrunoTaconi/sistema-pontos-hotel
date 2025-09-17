@@ -17,6 +17,8 @@ import { PiSignOutBold } from "react-icons/pi";
 import { RiAdminFill } from "react-icons/ri";
 import { useState } from "react";
 import { useUser } from "@/app/contexts/UserContext";
+import { FiMenu } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 
 const menuItems = [
   {
@@ -50,6 +52,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { usuario, loading } = useUser();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -58,42 +61,50 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className={styles.sidebarContainer}>
-      <div className={styles.top}>
-        <img src="/logo.png" alt="" />
-      </div>
-      <nav>
-        <ul className={styles.navList}>
-          {menuItems
-            .filter(
-              (item) => !item.adminOnly || usuario?.hierarquia === "admin"
-            ) 
-            .map((item, idx) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  href={item.href}
-                  key={idx}
-                  className={`${styles.navItem} ${
-                    isActive ? styles.navItemActive : ""
-                  }`}
-                >
-                  <span className={styles.navItemIcon}>
-                    {isActive ? item.iconFill : item.icon}
-                  </span>
-                  {item.label}
-                </Link>
-              );
-            })}
+    <>
+      <button className={styles.menuButton} onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+      </button>
 
-          <a href="/login" onClick={handleLogout} className={styles.navItem}>
-            <span className={styles.navItemIcon}>
-              <PiSignOutBold size={18} />
-            </span>
-            Sair
-          </a>
-        </ul>
-      </nav>
-    </aside>
+      <aside
+        className={`${styles.sidebarContainer} ${isOpen ? styles.open : ""}`}
+      >
+        <div className={styles.top}>
+          <img src="/logo.png" alt="" />
+        </div>
+        <nav>
+          <ul className={styles.navList}>
+            {menuItems
+              .filter(
+                (item) => !item.adminOnly || usuario?.hierarquia === "admin"
+              )
+              .map((item, idx) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    href={item.href}
+                    key={idx}
+                    className={`${styles.navItem} ${
+                      isActive ? styles.navItemActive : ""
+                    }`}
+                  >
+                    <span className={styles.navItemIcon}>
+                      {isActive ? item.iconFill : item.icon}
+                    </span>
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+            <a href="/login" onClick={handleLogout} className={styles.navItem}>
+              <span className={styles.navItemIcon}>
+                <PiSignOutBold size={18} />
+              </span>
+              Sair
+            </a>
+          </ul>
+        </nav>
+      </aside>
+    </>
   );
 }

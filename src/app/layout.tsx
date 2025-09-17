@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css"; // Seus estilos globais já importam a fonte
+import "./globals.css"; 
 import { UserProvider } from "./contexts/UserContext";
 
 export const metadata: Metadata = {
