@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
-import { Recompensa } from "@prisma/client";
 import Image from "next/image";
 import { recompensasMock, RecompensaMock } from "../data/mocks/recompensas";
 import { useUser } from "@/app/contexts/UserContext";
@@ -10,20 +9,21 @@ import { useUser } from "@/app/contexts/UserContext";
 //icons
 import { FaArrowRight } from "react-icons/fa6";
 
-
-
-
 const InicioPage = () => {
   const router = useRouter();
+
   const { usuario, loading } = useUser();
   const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
- 
+  if (!usuario) {
+    router.refresh();
+
+    if (loading || !usuario) return <p>Carregando...</p>;
+  }
+
   const handleResgatarAgora = (beneficio: RecompensaMock) => {
     router.push(`/inicio/${beneficio.id}`);
   };
-
-  if (loading) return <p>Carregando...</p>;
 
   return (
     <div className={styles.container}>
@@ -35,17 +35,17 @@ const InicioPage = () => {
         <div className={styles.pointsCard}>
           <p>Total de Pontos</p>
           <div className={styles.totalPontos}>
-            <Image alt="Real point Coin" src={"/rp_coin.png"} width={22}
-                    height={22}/>
+            <Image
+              alt="Real point Coin"
+              src={"/rp_coin.png"}
+              width={22}
+              height={22}
+            />
             <div className={styles.pointsValue}>
               <span>{usuario?.saldoPontos} Real Points</span>
             </div>
           </div>
         </div>
-        {/* <button className={styles.conferirButton}>
-          Conferir Benefícios
-          <FaArrowRight size={17} />
-        </button> */}
       </div>
       <div className={styles.beneficiosContainer}>
         <h1 className={styles.title}>Benefícios</h1>

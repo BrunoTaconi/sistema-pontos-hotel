@@ -4,15 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import Image from "next/image";
-import { FaUser, FaArrowLeft, FaEnvelope, FaMapMarkerAlt, FaPhone, FaFolderMinus, FaFolder, FaIdCard } from "react-icons/fa";
-import { FaFolderTree, FaIdBadge } from "react-icons/fa6";
+import { FaArrowLeft, FaEnvelope, FaPhone, FaIdCard } from "react-icons/fa";
 
 interface UserData {
   nome: string;
   email: string;
   telefone?: string;
   numeroDocumento?: string;
-  saldoPontos: number; // Adicionando o saldo de pontos
+  saldoPontos: number; 
 }
 
 const MyDataPage = () => {
@@ -29,7 +28,6 @@ const MyDataPage = () => {
           throw new Error("Não foi possível carregar os dados do usuário.");
         }
         const data: UserData = await res.json();
-        // Simulação de dados para exemplo
         setUserData(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");

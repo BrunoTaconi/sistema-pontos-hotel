@@ -1,14 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import {
-  Modal,
-  TextField,
-  Button,
-  Typography,
-  InputAdornment,
-} from "@mui/material";
+import { Modal, TextField, Button, InputAdornment } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
@@ -28,17 +22,7 @@ export default function PainelAdministrativo() {
   const [pontosAdicionar, setPontosAdicionar] = useState(0);
   const { usuario, loading } = useUser();
 
-  useEffect(() => {
-    if (usuario?.hierarquia !== "admin") return;
-
-    const delayDebounce = setTimeout(() => {
-      fetchUsuarios();
-    }, 400);
-
-    return () => clearTimeout(delayDebounce);
-  }, [usuario, search]);
-
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     try {
       const res = await fetch(
         `/api/usuarios?search=${encodeURIComponent(search)}`
@@ -49,7 +33,17 @@ export default function PainelAdministrativo() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [search]);
+
+  useEffect(() => {
+    if (usuario?.hierarquia !== "admin") return;
+
+    const delayDebounce = setTimeout(() => {
+      fetchUsuarios();
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [usuario, fetchUsuarios]);
 
   const filteredUsuarios = usuarios.filter((usuario) =>
     [

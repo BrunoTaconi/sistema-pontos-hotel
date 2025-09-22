@@ -1,8 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-//import { Resend } from "resend";
 import nodemailer from "nodemailer";
-//const resend = new Resend(process.env.RESEND_API_KEY);
 
 type Params = {
   params: { id: string };
@@ -14,15 +12,22 @@ const transporter = nodemailer.createTransport({
   secure: false, // true = 465, false = 587
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD, 
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
-export async function POST(request: Request, { params }: Params) {
+export async function POST(request: Request) {
   try {
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").filter(Boolean).pop();
+
+    if (!id) {
+      return NextResponse.json({ error: "ID não fornecido" }, { status: 400 });
+    }
+
     const body = await request.json();
     const { pontos } = body;
-    const idUsuario = Number(params.id);
+    const idUsuario = Number(id);
 
     if (isNaN(idUsuario) || typeof pontos !== "number") {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });

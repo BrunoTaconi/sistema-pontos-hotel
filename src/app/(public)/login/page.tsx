@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../styles.module.css";
 import Cookies from "js-cookie";
+import Image from "next/image";
+
 export default function Login() {
   const router = useRouter();
   const [formData, setFormData] = useState({ identifier: "", senha: "" });
@@ -33,14 +35,20 @@ export default function Login() {
         const errorData = await res.json();
         setError(errorData.error || errorData.message || "Falha no login.");
       }
-    } catch (err) {
-      setError("Erro de conexão. Tente novamente.");
+    } catch (error) {
+      console.error("Erro de conexão. Tente novamente.", error);
     }
   };
   return (
     <div className={styles.container}>
       {" "}
-      <img src="/logo.png" alt="Logo" className={styles.logo} />{" "}
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        width={302.88}
+        height={70}
+        className={styles.logo}
+      />
       <div className={styles.card}>
         {" "}
         <h1 className={styles.title}>Bem-vindo de volta!</h1>{" "}

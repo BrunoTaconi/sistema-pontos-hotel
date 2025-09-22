@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "./Sidebar.module.css";
 import Cookies from "js-cookie";
+import Image from "next/image";
 //icons
 import { IoHomeOutline } from "react-icons/io5";
 import { IoHome } from "react-icons/io5";
-import { PiCoinsBold } from "react-icons/pi";
-import { PiCoinsFill } from "react-icons/pi";
 import { HiOutlineUser } from "react-icons/hi2";
 import { HiUser } from "react-icons/hi2";
 import { TbHelpHexagon } from "react-icons/tb";
@@ -51,7 +50,7 @@ const menuItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { usuario, loading } = useUser();
+  const { usuario } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -70,7 +69,7 @@ export default function Sidebar() {
         className={`${styles.sidebarContainer} ${isOpen ? styles.open : ""}`}
       >
         <div className={styles.top}>
-          <img src="/logo.png" alt="" />
+          <Image src="/logo.png" width={176} height={40.67} alt="" />
         </div>
         <nav>
           <ul className={styles.navList}>

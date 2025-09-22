@@ -4,10 +4,6 @@ import { NextResponse } from "next/server";
 
 import nodemailer from "nodemailer";
 
-type Params = {
-  params: { id: string };
-};
-
 const transporter = nodemailer.createTransport({
   host: "smtp.uni5.net",
   port: 587, // ou 587 se não usar SSL
@@ -57,7 +53,9 @@ export async function POST(request: Request) {
         <p>Continue participando e acumulando! 🚀</p>
       `,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Erro ao enviar email", error)
+    }
 
     return NextResponse.json(usuario, { status: 201 });
   } catch (error) {

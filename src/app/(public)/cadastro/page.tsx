@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "../styles.module.css";
+import Image from "next/image";
 
 export default function CadastroStep1() {
   const router = useRouter();
@@ -17,7 +18,6 @@ export default function CadastroStep1() {
   const handleContinue = () => {
     if (validateCPF(cpf)) {
       setError("");
-      //const unmaskedCpf = cpf.replace(/[^\d]/g, "");
       router.push(`/cadastro/form?cpf=${cpf}`);
     } else {
       setError("Formato de CPF inválido. Use o formato 000.000.000-00");
@@ -26,7 +26,13 @@ export default function CadastroStep1() {
 
   return (
     <div className={styles.container}>
-      <img src="/logo.png" alt="Logo" className={styles.logo} />
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        width={302.88}
+        height={70} 
+        className={styles.logo}
+      />
       <div className={styles.card}>
         <h1 className={styles.title}>Bem vindo ao Clube de Vantagens!</h1>
         <p className={styles.subtitle}>Para continuar, digite seu CPF</p>

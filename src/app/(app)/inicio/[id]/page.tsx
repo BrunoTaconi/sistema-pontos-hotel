@@ -5,11 +5,13 @@ import { useRouter, useParams } from "next/navigation";
 import styles from "../styles.module.css";
 import Image from "next/image";
 import { recompensasMock, RecompensaMock } from "../../data/mocks/recompensas";
+
 //icons
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
+import { useUser } from "@/app/contexts/UserContext";
 
 const DetalheBeneficioContent = () => {
   const params = useParams();
@@ -17,9 +19,8 @@ const DetalheBeneficioContent = () => {
   const [beneficio, setBeneficio] = useState<RecompensaMock | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [saldo, setSaldo] = useState(25);
-  const idUsuario = 1;
-
+  const { usuario } = useUser();
+  
   useEffect(() => {
     if (params?.id) {
       const found = recompensasMock.find(
@@ -28,8 +29,6 @@ const DetalheBeneficioContent = () => {
       if (found) setBeneficio(found);
     }
   }, [params]);
-
-
 
   if (!beneficio) {
     return <div>Carregando...</div>;
@@ -95,9 +94,9 @@ const DetalheBeneficioContent = () => {
               <button
                 onClick={() => setShowConfirmModal(true)}
                 className={styles.detalheResgatarButton}
-                disabled={saldo < beneficio.custo}
+                disabled={usuario!.saldoPontos < beneficio.custo}
               >
-                {saldo < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
+                {usuario!.saldoPontos  < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
               </button>
             </div>
           </div>
@@ -127,14 +126,14 @@ const DetalheBeneficioContent = () => {
             <div className={styles.saldoInfo}>
               <div>
                 <p>Antigo</p>
-                <span>{saldo} rp</span>
+                <span>{usuario?.saldoPontos } rp</span>
               </div>
               <span>
                 <FaArrowRight />
               </span>
               <div>
                 <p>Novo Saldo</p>
-                <span>{saldo - beneficio.custo} rp</span>
+                <span>{usuario!.saldoPontos  - beneficio.custo} rp</span>
               </div>
             </div>
             <button
