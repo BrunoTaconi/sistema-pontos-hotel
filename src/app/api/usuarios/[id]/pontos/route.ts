@@ -16,21 +16,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function POST(request: Request) {
+export async function POST(request: Request, { params }: Params) {
   try {
-    const url = new URL(request.url);
-    const id = url.pathname.split("/").filter(Boolean).pop();
+    const id = params.id;
 
     if (!id) {
-      return NextResponse.json({ error: "ID não fornecido" }, { status: 400 });
+      return NextResponse.json(
+        { error: "ID não fornecido na URL" },
+        { status: 400 }
+      );
     }
 
     const body = await request.json();
     const { pontos } = body;
     const idUsuario = Number(id);
 
-    if (isNaN(idUsuario) || typeof pontos !== "number") {
-      return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+    if (isNaN(idUsuario)) {
+      return NextResponse.json(
+        { error: "ID de usuário inválido (não é um número)" },
+        { status: 400 }
+      );
+    }
+    if (typeof pontos !== "number") {
+      return NextResponse.json(
+        { error: "Quantidade de pontos inválida (deve ser um número)" },
+        { status: 400 }
+      );
     }
 
     const usuarioAtual = await prisma.usuario.findUnique({

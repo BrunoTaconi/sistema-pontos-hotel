@@ -62,7 +62,17 @@ export default function PainelAdministrativo() {
   const handleAdicionarPontos = async () => {
     if (!usuarioSelecionado) return;
 
-    if (pontosAdicionar > 4) {
+    const pontos = Math.floor(Math.abs(pontosAdicionar));
+
+    if (pontos === 0) {
+      toast.error("A quantidade de pontos deve ser maior que zero.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    if (pontos > 4) {
       toast.error("Você não pode adicionar mais de 4 pontos por vez!", {
         position: "top-right",
         autoClose: 3000,
@@ -73,7 +83,7 @@ export default function PainelAdministrativo() {
     await fetch(`/api/usuarios/${usuarioSelecionado.id}/pontos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pontos: Math.abs(pontosAdicionar) }),
+      body: JSON.stringify({ pontos: pontos }),
     });
 
     setOpenModal(false);
@@ -83,16 +93,29 @@ export default function PainelAdministrativo() {
   const handleRemoverPontos = async () => {
     if (!usuarioSelecionado) return;
 
+    const pontos = Math.floor(Math.abs(pontosAdicionar));
+
+    if (pontos === 0) {
+      toast.error(
+        "A quantidade de pontos deve ser maior que zero para remover.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        }
+      );
+      return;
+    }
+
     await fetch(`/api/usuarios/${usuarioSelecionado.id}/pontos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pontos: -Math.abs(pontosAdicionar) }),
+      body: JSON.stringify({ pontos: -pontos }), 
     });
 
     setOpenModal(false);
     fetchUsuarios();
   };
-
+  
   const columns: GridColDef[] = [
     { field: "nome", headerName: "Nome", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
@@ -277,8 +300,9 @@ export default function PainelAdministrativo() {
                   inputProps={{ min: 0 }}
                   value={pontosAdicionar}
                   onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setPontosAdicionar(val < 0 ? 0 : val);
+                    const val =
+                      e.target.value === "" ? 0 : Number(e.target.value);
+                    setPontosAdicionar(Math.floor(val < 0 ? 0 : val));
                   }}
                   fullWidth
                   className={styles.input}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import Image from "next/image";
@@ -15,10 +15,16 @@ const InicioPage = () => {
   const { usuario, loading } = useUser();
   const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
-  if (!usuario) {
-    router.refresh();
-
-    if (loading || !usuario) return <p>Carregando...</p>;
+  useEffect(() => {
+    if (!usuario && !loading) {
+      if (!usuario && !loading) {
+        router.push("/login");
+      }
+    }
+  }, [usuario, loading, router]); 
+  
+  if (loading || !usuario) {
+    return <p>Carregando...</p>;
   }
 
   const handleResgatarAgora = (beneficio: RecompensaMock) => {

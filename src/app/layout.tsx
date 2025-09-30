@@ -3,7 +3,7 @@ import "./globals.css";
 import { UserProvider } from "./contexts/UserContext";
 
 export const metadata: Metadata = {
-  title: "Meu App",
+  title: "Sistema de Pontos Hotel Real",
   description: "Descrição do meu app",
 };
 

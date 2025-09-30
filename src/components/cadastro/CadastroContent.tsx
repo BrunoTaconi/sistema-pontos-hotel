@@ -158,7 +158,7 @@ export function CadastroFormContent() {
           if (loginRes.ok) {
             const { token } = await loginRes.json();
             Cookies.set("token", token, { expires: 1 });
-            router.push("/inicio");
+            window.location.href = "/inicio";
           } else {
             console.error("Erro ao fazer login após cadastro");
             router.push("/login");
@@ -294,4 +294,3 @@ export function CadastroFormContent() {
     </div>
   );
 }
-
