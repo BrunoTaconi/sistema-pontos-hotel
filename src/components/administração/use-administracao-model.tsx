@@ -25,8 +25,9 @@ export function useAdministracaoViewModel() {
       setLoading(true);
       const data = await administracaoService.getUsuarios();
       setUsuarios(data);
-    } catch (err) {
+    } catch (error) {
       toast.error("Erro ao carregar usuários");
+      console.error(error)
     } finally {
       setLoading(false);
     }

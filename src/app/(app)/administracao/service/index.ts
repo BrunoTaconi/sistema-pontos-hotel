@@ -9,7 +9,7 @@ export const administracaoService = {
     return res.json();
   },
 
-  async adicionarPontos(usuarioId: any, pontos: number) {
+  async adicionarPontos(usuarioId: number, pontos: number) {
     const res = await fetch(`${API_URL}/${usuarioId}/pontos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -19,7 +19,7 @@ export const administracaoService = {
     return res.json();
   },
 
-  async removerPontos(usuarioId: any, pontos: number) {
+  async removerPontos(usuarioId: number, pontos: number) {
     const res = await fetch(`${API_URL}/${usuarioId}/pontos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

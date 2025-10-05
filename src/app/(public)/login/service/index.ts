@@ -1,5 +1,4 @@
 import { LoginForm, LoginResponse } from "@/components/login/use-login-model";
-import Cookies from "js-cookie";
 
 const API_URL = "/api/login";
 

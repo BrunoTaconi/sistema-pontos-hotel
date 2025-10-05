@@ -41,13 +41,17 @@ export function useLoginViewModel() {
       const { token } = await loginService.login(payload);
       Cookies.set("token", token, { expires: 1 });
       router.push("/inicio");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erro inesperado");
+      }
     }
   };
 
   const backFunction = () => router.back();
-  const pushCadastro = () => router.push("/cadastro")
+  const pushCadastro = () => router.push("/cadastro");
 
   return {
     formData,
