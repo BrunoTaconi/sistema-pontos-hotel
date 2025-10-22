@@ -24,7 +24,16 @@ export async function POST(request: Request) {
       JWT_SECRET,
       { expiresIn: "1d" }
     );
-    return NextResponse.json({ token }, { status: 200 });
+    const response = NextResponse.json({ success: true });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60,
+      path: "/",
+    });
+    return response;
   } catch (error) {
     console.error("Erro no login:", error);
     return NextResponse.json(

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../styles.module.css";
-import Cookies from "js-cookie";
 import Image from "next/image";
 
 export default function Login() {
@@ -28,8 +27,6 @@ export default function Login() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        const { token } = await res.json();
-        Cookies.set("token", token, { expires: 1 });
         window.location.href = "/inicio";
       } else {
         const errorData = await res.json();
