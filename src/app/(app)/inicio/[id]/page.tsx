@@ -32,7 +32,7 @@ const DetalheBeneficioContent = () => {
     }
   }, [params]);
 
-  if (!beneficio) {
+  if (!beneficio || !usuario) {
     return <div>Carregando...</div>;
   }
 
