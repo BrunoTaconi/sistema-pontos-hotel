@@ -20,6 +20,24 @@ model Usuario {
   saldoPontos     Int         @default(0)
   resgates        Resgate[]
   transacoes      Transacao[]
+  limiteConvites  Int         @default(5) // 🔹 total de convites permitidos
+  usosConvite     Int         @default(0)
+
+  codigoConvite String? @unique
+
+  convitesFeitos Convite[] @relation("ConvitesFeitos")
+  convitesUsados Convite[] @relation("ConvitesUsados")
+}
+
+model Convite {
+  id            Int      @id @default(autoincrement())
+  idConvidante  Int?
+  idConvidado   Int?
+  codigoConvite String
+  criadoEm      DateTime @default(now())
+
+  convidante Usuario? @relation("ConvitesFeitos", fields: [idConvidante], references: [id], onDelete: Cascade)
+  convidado  Usuario? @relation("ConvitesUsados", fields: [idConvidado], references: [id])
 }
 
 model Transacao {

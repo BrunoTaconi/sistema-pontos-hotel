@@ -1,13 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import { FaArrowLeft } from "react-icons/fa";
-import Image from "next/image"; // Importa o componente Image
+import Image from "next/image";
+import { RecompensaMock, recompensasMock } from "../data/mocks/recompensas";
 
 const AjudaPage = () => {
   const router = useRouter();
+  const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
   return (
     <div className={styles.container}>
@@ -45,7 +47,9 @@ const AjudaPage = () => {
             </div>
 
             <div className={styles.section}>
-              <h2>Reservas de Quartos:</h2>
+              <h2>Reservas de Quartos: </h2>
+
+              <p style={{ marginBottom: "1rem"}}> Minímo de 2 diárias para acumular pontos</p>
               <div className={styles.pointsGrid}>
                 <div className={styles.pointItem}>
                   <p>Luxo</p>
@@ -130,58 +134,21 @@ const AjudaPage = () => {
             </p>
 
             <div className={styles.premiosGrid}>
-              <div className={styles.premioItem}>
-                <p>30% off em decoração de quarto</p>
-                <span>
-                  10 RP
-                  <Image
-                    src="/rp_coin.png"
-                    width={16}
-                    height={16}
-                    alt="Real Points Coin"
-                    className={styles.rpCoinIcon}
-                  />
-                </span>
-              </div>
-              <div className={styles.premioItem}>
-                <p>Luminária relógio com carregador</p>
-                <span>
-                  20 RP
-                  <Image
-                    src="/rp_coin.png"
-                    width={16}
-                    height={16}
-                    alt="Real Points Coin"
-                    className={styles.rpCoinIcon}
-                  />
-                </span>
-              </div>
-              <div className={styles.premioItem}>
-                <p>Máquina de café expresso</p>
-                <span>
-                  40 RP
-                  <Image
-                    src="/rp_coin.png"
-                    width={16}
-                    height={16}
-                    alt="Real Points Coin"
-                    className={styles.rpCoinIcon}
-                  />
-                </span>
-              </div>
-              <div className={styles.premioItem}>
-                <p>iPhone 13 (único por CPF)</p>
-                <span>
-                  100 RP
-                  <Image
-                    src="/rp_coin.png"
-                    width={16}
-                    height={16}
-                    alt="Real Points Coin"
-                    className={styles.rpCoinIcon}
-                  />
-                </span>
-              </div>
+              {beneficios.map((beneficio) => (
+                <>
+                  <div className={styles.premioItem}>
+                    <p>{beneficio.nome}</p>
+                    <span>{beneficio.custo} RP</span>
+                    <Image
+                      src="/rp_coin.png"
+                      width={16}
+                      height={16}
+                      alt="Real Points Coin"
+                      className={styles.rpCoinIcon}
+                    />
+                  </div>
+                </>
+              ))}
             </div>
           </div>
         </div>

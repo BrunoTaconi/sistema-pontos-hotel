@@ -32,6 +32,7 @@ export function CadastroFormContent() {
     cidade: "",
     senha: "",
     confirmarSenha: "",
+    codigoConviteUsado: "",
   });
 
   useEffect(() => {
@@ -49,8 +50,11 @@ export function CadastroFormContent() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateNascimento = (data: string) =>
     /^\d{2}\/\d{2}\/\d{4}$/.test(data);
-  const validateCelular = (celular: string) =>
-    /^\(\d{2}\) \d{5}-\d{4}$/.test(celular);
+  const validateCelular = (celular: string) => {
+    const isBrazilian = /^\(\d{2}\) \d{5}-\d{4}$/.test(celular);
+    const isInternational = /^\+?\d{7,15}$/.test(celular.replace(/\s/g, ""));
+    return isBrazilian || isInternational;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target;
@@ -65,11 +69,13 @@ export function CadastroFormContent() {
     }
 
     if (name === "celular") {
-      value = value
-        .replace(/\D/g, "")
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2")
-        .replace(/(-\d{4})\d+?$/, "$1");
+      if (!value.startsWith("+")) {
+        value = value
+          .replace(/\D/g, "")
+          .replace(/(\d{2})(\d)/, "($1) $2")
+          .replace(/(\d{5})(\d)/, "$1-$2")
+          .replace(/(-\d{4})\d+?$/, "$1");
+      }
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -142,6 +148,7 @@ export function CadastroFormContent() {
             nascimento: formData.nascimento,
             estado: formData.estado,
             cidade: formData.cidade,
+            codigoConviteUsado: formData.codigoConviteUsado || undefined,
           }),
         });
 
@@ -241,7 +248,7 @@ export function CadastroFormContent() {
 
         <input
           name="celular"
-          placeholder="Celular ((XX) XXXXX-XXXX)"
+          placeholder="Celular ((XX) XXXXX-XXXX ou +1 415 555 2671)"
           value={formData.celular}
           onChange={handleChange}
           className={styles.input}
@@ -266,7 +273,13 @@ export function CadastroFormContent() {
           className={styles.input}
         />
         <ErrorMessage message={errors.cidade} />
-
+        <input
+          name="codigoConviteUsado"
+          placeholder="Código de convite (opcional)"
+          value={formData.codigoConviteUsado}
+          onChange={handleChange}
+          className={styles.input}
+        />
         <input
           name="senha"
           type="password"

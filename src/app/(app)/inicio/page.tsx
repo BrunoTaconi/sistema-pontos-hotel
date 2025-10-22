@@ -8,6 +8,7 @@ import { useUser } from "@/app/contexts/UserContext";
 
 //icons
 import { FaArrowRight } from "react-icons/fa6";
+import { TbCopy, TbCopyCheck } from "react-icons/tb";
 
 const InicioPage = () => {
   const router = useRouter();
@@ -15,20 +16,39 @@ const InicioPage = () => {
   const { usuario, loading } = useUser();
   const [beneficios] = useState<RecompensaMock[]>(recompensasMock);
 
+  const [copiado, setCopiado] = useState(false);
+
   useEffect(() => {
     if (!usuario && !loading) {
       if (!usuario && !loading) {
         router.push("/login");
       }
     }
-  }, [usuario, loading, router]); 
-  
+  }, [usuario, loading, router]);
+
   if (loading || !usuario) {
     return <p>Carregando...</p>;
   }
 
   const handleResgatarAgora = (beneficio: RecompensaMock) => {
     router.push(`/inicio/${beneficio.id}`);
+  };
+
+  const copiarCodigoConvite = () => {
+    if (usuario.codigoConvite) {
+      navigator.clipboard
+        .writeText(usuario.codigoConvite)
+        .then(() => {
+          setCopiado(true);
+
+          setTimeout(() => {
+            setCopiado(false);
+          }, 3000);
+        })
+        .catch((err) => {
+          console.error("Erro ao copiar: ", err);
+        });
+    }
   };
 
   return (
@@ -50,6 +70,32 @@ const InicioPage = () => {
             <div className={styles.pointsValue}>
               <span>{usuario?.saldoPontos} Real Points</span>
             </div>
+          </div>
+        </div>
+        <div className={styles.codigoConvite}>
+          <p>
+            {" "}
+            <strong>{usuario.limiteConvites - usuario.usosConvite}</strong> convites
+            restantes
+          </p>
+          <p>Seu código de convite:</p>
+          <div className={styles.copiarCodigo}>
+            <span>{usuario.codigoConvite}</span>
+            <button
+              onClick={copiarCodigoConvite}
+              className={`${styles.copiarBtn} ${copiado ? styles.copiado : ""}`}
+              disabled={copiado}
+            >
+              {copiado ? (
+                <>
+                  <TbCopyCheck size={18} />
+                  <span className={styles.feedbackText}>Copiado!</span>
+                </>
+              ) : (
+                // Opção 2: Ícone original
+                <TbCopy size={18} />
+              )}
+            </button>
           </div>
         </div>
       </div>

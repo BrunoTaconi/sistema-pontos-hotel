@@ -5,6 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import styles from "../styles.module.css";
 import Image from "next/image";
 import { recompensasMock, RecompensaMock } from "../../data/mocks/recompensas";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
 
 //icons
 import { FaArrowLeft } from "react-icons/fa6";
@@ -20,7 +22,7 @@ const DetalheBeneficioContent = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { usuario } = useUser();
-  
+
   useEffect(() => {
     if (params?.id) {
       const found = recompensasMock.find(
@@ -35,17 +37,18 @@ const DetalheBeneficioContent = () => {
   }
 
   return (
-    <div className={styles.detalheContainer}>
-      <div className={styles.backContainer}>
-        <button onClick={() => router.back()} className={styles.backButton}>
-          <FaArrowLeft size={17} />
-        </button>
-        <p>{beneficio.nome}</p>
-      </div>
+    <div className={styles.globalDetalhe}>
+      <div className={styles.detalheContainer}>
+        <div className={styles.backContainer}>
+          <button onClick={() => router.back()} className={styles.backButton}>
+            <FaArrowLeft size={17} />
+          </button>
+          <p>{beneficio.nome}</p>
+        </div>
 
-      <div className={styles.contentContainer}>
-        <div className={styles.detalheGrid}>
-          <div className={styles.images}>
+        <div className={styles.contentContainer}>
+          <div className={styles.detalheGrid}>
+            {/* <div className={styles.images}>
             <div className={styles.thumbnailRow}>
               {beneficio.imagens.slice(2).map((img, idx) => (
                 <div className={styles.smallImageWrapper} key={idx}>
@@ -73,100 +76,126 @@ const DetalheBeneficioContent = () => {
                 }}
               />
             </div>
-          </div>
-
-          <div className={styles.detalheInfo}>
-            <div className={styles.topPart}>
-              <p>Recompensa</p>
-              <h1>{beneficio.nome}</h1>
-              <p>{beneficio.descricao}</p>
+          </div> */}
+            <div className={styles.images}>
+              <ImageGallery
+                items={beneficio.imagens.map((img) => ({
+                  original: img,
+                  thumbnail: img,
+                }))}
+                showPlayButton={false}
+                showFullscreenButton={false}
+                slideDuration={300}
+                showNav={false}
+                renderItem={(item) => (
+                  <div className={styles.customMainImageWrapper}>
+                    <Image
+                      src={item.original}
+                      alt={beneficio.nome}
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                )}
+              />
             </div>
-            <div className={styles.bottomPart}>
-              <div className={styles.detalhePoints}>
-                <Image
-                  src="/icon.svg"
-                  alt="Real Points"
-                  width={20}
-                  height={20}
-                />
-                <span>{beneficio.custo} Real Points</span>
+
+            <div className={styles.detalheInfo}>
+              <div className={styles.topPart}>
+                <p>Recompensa</p>
+                <h1>{beneficio.nome}</h1>
+                <p>{beneficio.descricao}</p>
+              </div>
+              <div className={styles.bottomPart}>
+                <div className={styles.detalhePoints}>
+                  <Image
+                    src="/icon.svg"
+                    alt="Real Points"
+                    width={20}
+                    height={20}
+                  />
+                  <span>{beneficio.custo} Real Points</span>
+                </div>
+                <button
+                  onClick={() => setShowConfirmModal(true)}
+                  className={styles.detalheResgatarButton}
+                  disabled={usuario!.saldoPontos < beneficio.custo}
+                >
+                  {usuario!.saldoPontos < beneficio.custo
+                    ? "Saldo Insuficiente"
+                    : "Resgatar"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal de Confirmação */}
+        {showConfirmModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className={styles.closeModalButton}
+              >
+                <IoClose />
+              </button>
+              <h2>Resgatar Recompensa</h2>
+              <p>
+                Essa recompensa custa{" "}
+                <strong>{beneficio.custo} Real Points</strong>.<b></b>
+              </p>
+              <p>
+                Para resgatá-la, basta ir até a recepção e utilizar seu
+                benefício.
+              </p>
+              <br />
+              <p>Após o resgate seu novo saldo será de:</p>
+              <div className={styles.saldoInfo}>
+                <div>
+                  <p>Antigo</p>
+                  <span>{usuario?.saldoPontos} rp</span>
+                </div>
+                <span>
+                  <FaArrowRight />
+                </span>
+                <div>
+                  <p>Novo Saldo</p>
+                  <span>{usuario!.saldoPontos - beneficio.custo} rp</span>
+                </div>
               </div>
               <button
-                onClick={() => setShowConfirmModal(true)}
-                className={styles.detalheResgatarButton}
-                disabled={usuario!.saldoPontos < beneficio.custo}
+                onClick={() => setShowConfirmModal(false)}
+                //onClick={handleResgateConfirmado}
+                className={styles.confirmResgateButton}
               >
-                {usuario!.saldoPontos  < beneficio.custo ? "Saldo Insuficiente" : "Resgatar"}
+                Entendido
               </button>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Modal de Sucesso */}
+        {showSuccessModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <h2>Recompensa resgatada com sucesso!</h2>
+              <div className={styles.successIcon}>
+                <FaCheck />
+              </div>
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  router.push("/inicio");
+                }}
+                className={styles.confirmResgateButton}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Modal de Confirmação */}
-      {showConfirmModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <button
-              onClick={() => setShowConfirmModal(false)}
-              className={styles.closeModalButton}
-            >
-              <IoClose />
-            </button>
-            <h2>Resgatar Recompensa</h2>
-            <p>
-              Essa recompensa custa{" "}
-              <strong>{beneficio.custo} Real Points</strong>.<b></b>
-            </p>
-            <p>
-              Para resgatá-la, basta ir até a recepção e utilizar seu benefício.
-            </p>
-            <br />
-            <p>Após o resgate seu novo saldo será de:</p>
-            <div className={styles.saldoInfo}>
-              <div>
-                <p>Antigo</p>
-                <span>{usuario?.saldoPontos } rp</span>
-              </div>
-              <span>
-                <FaArrowRight />
-              </span>
-              <div>
-                <p>Novo Saldo</p>
-                <span>{usuario!.saldoPontos  - beneficio.custo} rp</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowConfirmModal(false)}
-              //onClick={handleResgateConfirmado}
-              className={styles.confirmResgateButton}
-            >
-              Entendido
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Sucesso */}
-      {showSuccessModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h2>Recompensa resgatada com sucesso!</h2>
-            <div className={styles.successIcon}>
-              <FaCheck />
-            </div>
-            <button
-              onClick={() => {
-                setShowSuccessModal(false);
-                router.push("/inicio");
-              }}
-              className={styles.confirmResgateButton}
-            >
-              Fechar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

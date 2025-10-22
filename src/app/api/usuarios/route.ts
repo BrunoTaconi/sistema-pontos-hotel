@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
-
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
@@ -17,8 +17,15 @@ const transporter = nodemailer.createTransport({
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { nome, email, tipoDocumento, numeroDocumento, hashSenha, telefone } =
-      body;
+    const {
+      nome,
+      email,
+      tipoDocumento,
+      numeroDocumento,
+      hashSenha,
+      telefone,
+      codigoConviteUsado,
+    } = body;
 
     if (!nome || !email || !hashSenha || !tipoDocumento || !numeroDocumento) {
       return NextResponse.json(
@@ -27,7 +34,39 @@ export async function POST(request: Request) {
       );
     }
 
+    const codigoConvite = randomBytes(4).toString("hex").toUpperCase();
     const hashedPassword = await bcrypt.hash(hashSenha, 12);
+    let pontosIniciais = 3;
+    let convidante = null;
+
+    if (codigoConviteUsado) {
+      convidante = await prisma.usuario.findUnique({
+        where: { codigoConvite: codigoConviteUsado },
+      });
+
+      if (!convidante) {
+        return NextResponse.json(
+          { error: "Código de convite inválido." },
+          { status: 400 }
+        );
+      }
+
+      if (convidante.usosConvite >= convidante.limiteConvites) {
+        return NextResponse.json(
+          { error: "Este código de convite já atingiu o limite de usos." },
+          { status: 400 }
+        );
+      }
+
+      await prisma.usuario.update({
+        where: { id: convidante.id },
+        data: {
+          usosConvite: { increment: 1 },
+        },
+      });
+
+      pontosIniciais = 4;
+    }
 
     const usuario = await prisma.usuario.create({
       data: {
@@ -36,10 +75,36 @@ export async function POST(request: Request) {
         tipoDocumento,
         numeroDocumento,
         hashSenha: hashedPassword,
-        saldoPontos: 3,
+        saldoPontos: pontosIniciais,
         telefone,
+        codigoConvite,
+        limiteConvites: 5,
+        usosConvite: 0,
       },
     });
+
+    if (convidante) {
+      await prisma.convite.create({
+        data: {
+          idConvidante: convidante.id,
+          idConvidado: usuario.id,
+          codigoConvite: codigoConviteUsado,
+        },
+      });
+
+      await prisma.usuario.update({
+        where: { id: convidante.id },
+        data: {
+          saldoPontos: { increment: 1 },
+          transacoes: {
+            create: {
+              pontos: 1,
+              tipo: "ganho",
+            },
+          },
+        },
+      });
+    }
 
     try {
       await transporter.sendMail({
@@ -47,14 +112,14 @@ export async function POST(request: Request) {
         to: usuario.email,
         subject: "Você recebeu pontos! 🎉",
         html: `
-        <p>Olá <b>${usuario.nome}</b>,, parabéns por criar sua conta!</p>
-        <p>Você acabou de receber <b>${3} pontos</b> por fazer cadastro no nosso sistema.</p>
-        <p>Por enquanto seu saldo total é de <b>${3} pontos</b>.</p>
+        <p>Olá <b>${usuario.nome}</b>, parabéns por criar sua conta!</p>
+        <p>Você acabou de receber <b>${pontosIniciais} pontos</b> por fazer cadastro no nosso sistema.</p>
+        <p>Por enquanto seu saldo total é de <b>${pontosIniciais} pontos</b>.</p>
         <p>Continue participando e acumulando! 🚀</p>
       `,
       });
     } catch (error) {
-      console.error("Erro ao enviar email", error)
+      console.error("Erro ao enviar email", error);
     }
 
     return NextResponse.json(usuario, { status: 201 });
