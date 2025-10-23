@@ -75,8 +75,8 @@ const InicioPage = () => {
         <div className={styles.codigoConvite}>
           <p>
             {" "}
-            <strong>{usuario.limiteConvites - usuario.usosConvite}</strong> convites
-            restantes
+            <strong>{usuario.limiteConvites - usuario.usosConvite}</strong>{" "}
+            convites restantes
           </p>
           <p>Seu código de convite:</p>
           <div className={styles.copiarCodigo}>
@@ -88,12 +88,11 @@ const InicioPage = () => {
             >
               {copiado ? (
                 <>
-                  <TbCopyCheck size={18} />
+                  <TbCopyCheck size={18} className={styles.icon}/>
                   <span className={styles.feedbackText}>Copiado!</span>
                 </>
               ) : (
-                // Opção 2: Ícone original
-                <TbCopy size={18} />
+                <TbCopy size={18} className={styles.icon}/>
               )}
             </button>
           </div>
@@ -125,7 +124,7 @@ const InicioPage = () => {
                 />
                 {beneficio.custo} Real Points
               </p>
-              <button
+              {/* <button
                 onClick={() => {
                   if (usuario!.saldoPontos >= beneficio.custo) {
                     handleResgatarAgora(beneficio);
@@ -139,6 +138,15 @@ const InicioPage = () => {
                 {usuario!.saldoPontos < beneficio.custo
                   ? "Pontos insuficientes"
                   : "Detalhes"}
+                <FaArrowRight size={18} />
+              </button> */}
+              <button
+                onClick={() => {
+                  handleResgatarAgora(beneficio);
+                }}
+                className={styles.resgatarButton}
+              >
+                Detalhes
                 <FaArrowRight size={18} />
               </button>
             </div>

@@ -6,8 +6,8 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.uni5.net",
-  port: 587, // ou 587 se não usar SSL
-  secure: false, // true = 465, false = 587
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -34,99 +34,98 @@ export async function POST(request: Request) {
       );
     }
 
-    const codigoConvite = randomBytes(4).toString("hex").toUpperCase();
     const hashedPassword = await bcrypt.hash(hashSenha, 12);
+    const codigoConvite = randomBytes(4).toString("hex").toUpperCase();
     let pontosIniciais = 3;
-    let convidante = null;
 
-    if (codigoConviteUsado) {
-      convidante = await prisma.usuario.findUnique({
-        where: { codigoConvite: codigoConviteUsado },
-      });
+    const result = await prisma.$transaction(async (tx) => {
+      let convidante = null;
 
-      if (!convidante) {
-        return NextResponse.json(
-          { error: "Código de convite inválido." },
-          { status: 400 }
-        );
+      if (codigoConviteUsado) {
+        convidante = await tx.usuario.findUnique({
+          where: { codigoConvite: codigoConviteUsado },
+        });
+
+        if (!convidante) {
+          throw new Error("Código de convite inválido.");
+        }
+
+        if (convidante.usosConvite >= convidante.limiteConvites) {
+          throw new Error(
+            "Este código de convite já atingiu o limite de usos."
+          );
+        }
+
+       
+        await tx.usuario.update({
+          where: { id: convidante.id },
+          data: { usosConvite: { increment: 1 } },
+        });
+
+        pontosIniciais = 4;
       }
 
-      if (convidante.usosConvite >= convidante.limiteConvites) {
-        return NextResponse.json(
-          { error: "Este código de convite já atingiu o limite de usos." },
-          { status: 400 }
-        );
-      }
-
-      await prisma.usuario.update({
-        where: { id: convidante.id },
+   
+      const usuario = await tx.usuario.create({
         data: {
-          usosConvite: { increment: 1 },
+          nome,
+          email,
+          tipoDocumento,
+          numeroDocumento,
+          hashSenha: hashedPassword,
+          telefone,
+          saldoPontos: pontosIniciais,
+          codigoConvite,
+          limiteConvites: 5,
+          usosConvite: 0,
         },
       });
 
-      pontosIniciais = 4;
-    }
+      if (convidante) {
+      
+        await tx.convite.create({
+          data: {
+            idConvidante: convidante.id,
+            idConvidado: usuario.id,
+            codigoConvite: codigoConviteUsado,
+          },
+        });
 
-    const usuario = await prisma.usuario.create({
-      data: {
-        nome,
-        email,
-        tipoDocumento,
-        numeroDocumento,
-        hashSenha: hashedPassword,
-        saldoPontos: pontosIniciais,
-        telefone,
-        codigoConvite,
-        limiteConvites: 5,
-        usosConvite: 0,
-      },
-    });
-
-    if (convidante) {
-      await prisma.convite.create({
-        data: {
-          idConvidante: convidante.id,
-          idConvidado: usuario.id,
-          codigoConvite: codigoConviteUsado,
-        },
-      });
-
-      await prisma.usuario.update({
-        where: { id: convidante.id },
-        data: {
-          saldoPontos: { increment: 1 },
-          transacoes: {
-            create: {
-              pontos: 1,
-              tipo: "ganho",
+        await tx.usuario.update({
+          where: { id: convidante.id },
+          data: {
+            saldoPontos: { increment: 1 },
+            transacoes: {
+              create: { pontos: 1, tipo: "ganho" },
             },
           },
-        },
-      });
-    }
+        });
+      }
+
+      return { usuario, convidante };
+    });
 
     try {
       await transporter.sendMail({
         from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
-        to: usuario.email,
+        to: result.usuario.email,
         subject: "Você recebeu pontos! 🎉",
         html: `
-        <p>Olá <b>${usuario.nome}</b>, parabéns por criar sua conta!</p>
-        <p>Você acabou de receber <b>${pontosIniciais} pontos</b> por fazer cadastro no nosso sistema.</p>
-        <p>Por enquanto seu saldo total é de <b>${pontosIniciais} pontos</b>.</p>
-        <p>Continue participando e acumulando! 🚀</p>
-      `,
+          <p>Olá <b>${result.usuario.nome}</b>, parabéns por criar sua conta!</p>
+          <p>Você acabou de receber <b>${pontosIniciais} pontos</b> por fazer cadastro no nosso sistema.</p>
+          <p>Por enquanto seu saldo total é de <b>${pontosIniciais} pontos</b>.</p>
+          <p>Continue participando e acumulando! 🚀</p>
+        `,
       });
     } catch (error) {
       console.error("Erro ao enviar email", error);
     }
 
-    return NextResponse.json(usuario, { status: 201 });
-  } catch (error) {
+    return NextResponse.json(result.usuario, { status: 201 });
+  } catch (error: any) {
     console.error("Erro ao criar usuário:", error);
     return NextResponse.json(
-      { error: "Erro interno do servidor" },
+      { error: error.message || "Erro interno do servidor" },
       { status: 500 }
     );
   }

@@ -17,10 +17,15 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: var(--bg-secondary);
+  background-color: var(--primary);
+  color: var(--bg-primary);
   border-radius: var(--radius-sm);
   padding: 0.5rem;
   gap: 1rem;
+}
+
+.icon {
+  background-color: transparent;
 }
 
 .copiarCodigo > span {
@@ -32,15 +37,16 @@
   place-items: center;
   border: none;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--bg-primary);
   transition: 0.2s ease;
+  background: transparent;
 }
 
 .copiado {
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  color: green;
+  color: var(--bg-primary);
   background: none;
   width: auto;
   height: auto;
@@ -64,7 +70,7 @@
 }
 
 .copiarBtn:hover {
-  color: var(--text-primary);
+  color: var(--bg-secondaryg);
 }
 
 .copiarBtn > span {
@@ -108,12 +114,13 @@
 
 .title {
   font-size: 1.75em;
-  color: var(--text-primary);
+  //color: var(--bg-primary);
+  color: #d8aa53;
   font-weight: 500;
 }
 
 .subTitle {
-  color: var(--text-secondary);
+  color: var(--bg-secondary);
 }
 
 .header {
