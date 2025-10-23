@@ -56,7 +56,6 @@ export async function POST(request: Request) {
           );
         }
 
-       
         await tx.usuario.update({
           where: { id: convidante.id },
           data: { usosConvite: { increment: 1 } },
@@ -65,7 +64,6 @@ export async function POST(request: Request) {
         pontosIniciais = 4;
       }
 
-   
       const usuario = await tx.usuario.create({
         data: {
           nome,
@@ -82,7 +80,6 @@ export async function POST(request: Request) {
       });
 
       if (convidante) {
-      
         await tx.convite.create({
           data: {
             idConvidante: convidante.id,
@@ -122,6 +119,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(result.usuario, { status: 201 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Erro ao criar usuário:", error);
     return NextResponse.json(
