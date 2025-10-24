@@ -80,6 +80,7 @@ export async function POST(request: Request, { params }: Params) {
         .sendMail({
           from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
           to: usuario.email,
+          bcc: "alairandolphi@gmail.com",
           subject: "Você recebeu pontos! 🎉",
           html: `
       <p>Olá <b>${usuario.nome}</b>,</p>
