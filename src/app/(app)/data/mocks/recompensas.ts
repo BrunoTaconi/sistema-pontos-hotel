@@ -62,8 +62,9 @@ export const recompensasMock: RecompensaMock[] = [
     id: 4,
     nome: "iPhone 16e - Branco",
     descricao:
-      "O Futuro em Suas Mãos!O iPhone 16e chegou para transformar a maneira como você vive e interage com o mundo. Com design refinado, desempenho incomparável e recursos inovadores, ele é mais do que um smartphone – é uma experiência que vai além das suas expectativas." +
-      "O futuro já chegou. Com o iPhone 16e, você não está apenas comprando um celular, você está investindo em tecnologia de ponta, estilo e inovação. Não perca a chance de viver a experiência de um iPhone como nunca antes.",
+      "O Futuro em Suas Mãos!\n\n" +
+      "O iPhone 16e chegou para transformar a maneira como você vive e interage com o mundo. Com design refinado, desempenho incomparável e recursos inovadores, ele é mais do que um smartphone – é uma experiência que vai além das suas expectativas.\n\n" +
+      "O futuro já chegou. Com o iPhone 16e, você não está apenas comprando um celular, você está investindo em tecnologia de ponta, estilo e inovação. Não perca a chance de viver a experiência de um iPhone como nunca antes.",
     custo: 100,
     ativo: true,
     criadoEm: new Date(),

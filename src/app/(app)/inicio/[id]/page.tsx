@@ -104,7 +104,7 @@ const DetalheBeneficioContent = () => {
               <div className={styles.topPart}>
                 <p>Recompensa</p>
                 <h1>{beneficio.nome}</h1>
-                <p>{beneficio.descricao}</p>
+                <p style={{ whiteSpace: "pre-line" }}> {beneficio.descricao}</p>
               </div>
               <div className={styles.bottomPart}>
                 <div className={styles.detalhePoints}>
