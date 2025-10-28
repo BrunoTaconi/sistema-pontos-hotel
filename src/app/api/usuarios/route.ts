@@ -106,7 +106,6 @@ export async function POST(request: Request) {
       await transporter.sendMail({
         from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
         to: result.usuario.email,
-        bcc: "alairandolphi@gmail.com",
         subject: "Você recebeu pontos! 🎉",
         html: `
           <p>Olá <b>${result.usuario.nome}</b>, parabéns por criar sua conta!</p>
@@ -114,6 +113,14 @@ export async function POST(request: Request) {
           <p>Por enquanto seu saldo total é de <b>${pontosIniciais} pontos</b>.</p>
           <p>Continue participando e acumulando! 🚀</p>
         `,
+      });
+      await transporter.sendMail({
+        from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
+        to: "alairandolphi@gmail.com",
+        subject: `Novo usuário ganhou pontos: ${result.usuario.nome}`,
+        html: `
+        <p>O usuário <b>${result.usuario.nome}</b> (${result.usuario.email}) acabou de receber <b>${pontosIniciais} pontos</b>.</p>
+      `,
       });
     } catch (error) {
       console.error("Erro ao enviar email", error);

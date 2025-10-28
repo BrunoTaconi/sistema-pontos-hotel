@@ -76,23 +76,33 @@ export async function POST(request: Request, { params }: Params) {
     });
 
     if (pontos > 0 && usuario.email) {
-      transporter
-        .sendMail({
+      try {
+        // Envia o e-mail para o usuário (com cópia oculta)
+        await transporter.sendMail({
           from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
           to: usuario.email,
-          bcc: "alairandolphi@gmail.com",
           subject: "Você recebeu pontos! 🎉",
           html: `
-      <p>Olá <b>${usuario.nome}</b>,</p>
-      <p>Você acabou de receber <b>${pontos} pontos</b> em sua conta.</p>
-      <p>Agora seu saldo total é de <b>${usuario.saldoPontos} pontos</b>.</p>
-      <p>Continue participando e acumulando! 🚀</p>
-    `,
-        })
-        .catch((emailError) => {
-          console.error("Erro ao enviar email:", emailError);
+        <p>Olá <b>${usuario.nome}</b>,</p>
+        <p>Você acabou de receber <b>${pontos} pontos</b> em sua conta.</p>
+        <p>Agora seu saldo total é de <b>${usuario.saldoPontos} pontos</b>.</p>
+        <p>Continue participando e acumulando! 🚀</p>
+      `,
         });
+
+        await transporter.sendMail({
+          from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
+          to: "alairandolphi@gmail.com",
+          subject: `Novo usuário ganhou pontos: ${usuario.nome}`,
+          html: `
+        <p>O usuário <b>${usuario.nome}</b> (${usuario.email}) acabou de receber <b>${pontos} pontos</b>.</p>
+      `,
+        });
+      } catch (emailError) {
+        console.error("Erro ao enviar email:", emailError);
+      }
     }
+
     return NextResponse.json(usuario, { status: 200 });
   } catch (error) {
     console.error(error);
