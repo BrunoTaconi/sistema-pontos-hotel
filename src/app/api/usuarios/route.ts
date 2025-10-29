@@ -116,7 +116,8 @@ export async function POST(request: Request) {
       });
       await transporter.sendMail({
         from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
-        to: "alairandolphi@gmail.com",
+        //to: "alairandolphi@gmail.com",
+        to: "brunotaconi@gmail.com",
         subject: `Novo usuário ganhou pontos: ${result.usuario.nome}`,
         html: `
         <p>O usuário <b>${result.usuario.nome}</b> (${result.usuario.email}) acabou de receber <b>${pontosIniciais} pontos</b>.</p>
