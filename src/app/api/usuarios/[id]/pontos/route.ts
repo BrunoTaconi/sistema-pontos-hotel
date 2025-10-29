@@ -80,6 +80,7 @@ export async function POST(request: Request, { params }: Params) {
         // Envia o e-mail para o usuário (com cópia oculta)
         await transporter.sendMail({
           from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
+          bcc: "brunotaconi@gmail.com",
           to: usuario.email,
           subject: "Você recebeu pontos! 🎉",
           html: `
@@ -90,15 +91,14 @@ export async function POST(request: Request, { params }: Params) {
       `,
         });
 
-        await transporter.sendMail({
-          from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
-          //to: "alairandolphi@gmail.com",
-          to: "brunotaconi@gmail.com",
-          subject: `Novo usuário ganhou pontos: ${usuario.nome}`,
-          html: `
-        <p>O usuário <b>${usuario.nome}</b> (${usuario.email}) acabou de receber <b>${pontos} pontos</b>.</p>
-      `,
-        });
+      //   await transporter.sendMail({
+      //     from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
+      //     to: "alairandolphi@gmail.com",
+      //     subject: `Novo usuário ganhou pontos: ${usuario.nome}`,
+      //     html: `
+      //   <p>O usuário <b>${usuario.nome}</b> (${usuario.email}) acabou de receber <b>${pontos} pontos</b>.</p>
+      // `,
+      //   });
       } catch (emailError) {
         console.error("Erro ao enviar email:", emailError);
       }
