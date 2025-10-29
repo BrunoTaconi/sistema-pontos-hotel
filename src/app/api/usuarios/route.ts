@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     });
 
     try {
-      await transporter.sendMail({
+      transporter.sendMail({
         from: `"Hotel Real Cabo Frio" <contato@hotelrealcabofrio.com.br>`,
         to: result.usuario.email,
         bcc: "brunotaconi@gmail.com",
