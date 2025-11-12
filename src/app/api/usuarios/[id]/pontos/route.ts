@@ -7,13 +7,21 @@ type Params = {
 };
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.uni5.net",
-  port: 587, // ou 587 se não usar SSL
-  secure: false, // true = 465, false = 587
+  host: "smtp.hotelrealcabofrio.com.br",
+  port: 465, // ou 587 se não usar SSL
+  secure: true, // true = 465, false = 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("Erro na conexão SMTP:", error);
+  } else {
+    console.log("Servidor SMTP pronto para enviar e-mails!");
+  }
 });
 
 export async function POST(request: Request, { params }: Params) {
