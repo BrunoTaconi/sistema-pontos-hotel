@@ -1,4 +1,4 @@
-📘 Sistema de Pontos — Hotel Real Cabo Frio
+# 📘 Sistema de Pontos — Hotel Real Cabo Frio
 
 Este repositório contém o código-fonte do MVP do Sistema de Pontos.
 O projeto foi desenvolvido em Next.js, utilizando Vercel para deploy e Neon Database para o banco de dados PostgreSQL.
