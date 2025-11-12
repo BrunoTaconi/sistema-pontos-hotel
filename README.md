@@ -67,12 +67,16 @@ O sistema estará online e funcional no domínio gerado pela Vercel (exemplo:
 https://sistema-pontos-hotel.vercel.app).
 
 📁 Estrutura básica do projeto
+
+```
 src/
 ├── app/               # Páginas e rotas do Next.js
 ├── components/        # Componentes reutilizáveis
 ├── lib/               # Configurações (ex: prisma)
 ├── services/          # Funções de integração
 └── utils/             # Funções auxiliares
+
+```
 
 💡 Observações finais
 
